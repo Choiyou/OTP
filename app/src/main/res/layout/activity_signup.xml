@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.os150.otp.MainActivity">
+    <Button
+        android:id="@+id/backbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:text="뒤로가기 > "
+        android:fontFamily="@font/cafe24simplehae"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:padding="40dp"
+        android:text="SIGN UP"
+        android:textSize="50dp"
+        android:textStyle="bold"
+        android:fontFamily="@font/cafe24simplehae"
+        />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="85dp"
+            android:fontFamily="@font/cafe24simplehae"
+            android:text="성함"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+        <EditText
+            android:id="@+id/name"
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:hint="본명"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="85dp"
+            android:text="별명"
+            android:textStyle="bold"
+            android:textSize="20dp"
+            android:fontFamily="@font/cafe24simplehae"
+            />
+
+        <EditText
+            android:id="@+id/nickname"
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:hint="활동명"
+            android:inputType="textPassword"
+            android:singleLine="true"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="31dp"
+            android:text="핸드폰번호"
+            android:textStyle="bold"
+            android:textSize="20dp"
+            android:fontFamily="@font/cafe24simplehae"
+            />
+
+        <EditText
+            android:id="@+id/phonenum"
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:hint="'-' 제외"
+            android:singleLine="true"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="66dp"
+            android:text="이메일"
+            android:textStyle="bold"
+            android:textSize="20dp"
+            android:fontFamily="@font/cafe24simplehae"
+            />
+
+        <EditText
+            android:id="@+id/email"
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:hint="실제 주소"
+            android:singleLine="true"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="48dp"
+            android:text="비밀번호"
+            android:textStyle="bold"
+            android:textSize="20dp"
+            android:fontFamily="@font/cafe24simplehae"
+            />
+
+        <EditText
+            android:id="@+id/pw"
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:hint="6자리 이상"
+            android:inputType="textPassword"
+            android:singleLine="true"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
+            android:text="비밀번호 확인"
+            android:textStyle="bold"
+            android:textSize="20dp"
+            android:fontFamily="@font/cafe24simplehae"
+            />
+
+        <EditText
+            android:id="@+id/pwcheck"
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:hint="비밀번호 확인"
+            android:inputType="textPassword"
+            android:singleLine="true"
+            />
+    </LinearLayout>
+    <Button
+        android:id="@+id/signupbtn"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_round"
+        android:layout_margin="10dp"
+        android:textSize="18dp"
+        android:text="Sign up"
+        android:fontFamily="@font/cafe24simplehaebold"
+        />
+    </LinearLayout>
+
+</LinearLayout>
