@@ -73,7 +73,6 @@
             android:layout_width="220dp"
             android:layout_height="wrap_content"
             android:hint="활동명"
-            android:inputType="textPassword"
             android:singleLine="true"
             />
     </LinearLayout>

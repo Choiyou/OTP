@@ -41,10 +41,10 @@ public class MainActivity extends AppCompatActivity {
         FirebaseUser user = mAuth.getCurrentUser();
 
         final ProgressDialog progressDialog = new ProgressDialog(this);
-        if(user!=null){
+       /* if(user!=null){
             finish();
-            startActivity(new Intent(getApplicationContext(), TabActivity.class));
-        }
+            startActivity(new Intent(getApplicationContext(), SecondMainActivity.class));
+        }*/
         signupbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -69,19 +69,21 @@ public class MainActivity extends AppCompatActivity {
                 }
                 progressDialog.setMessage("로그인중입니다.\n 잠시만 기다려주세요 :) ");
                 progressDialog.show();
+
                 mAuth.signInWithEmailAndPassword(id,pw).addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
-                            Intent tabintent = new Intent(getApplicationContext(),TabActivity.class);
+                            Intent tabintent = new Intent(getApplicationContext(),SecondMainActivity.class);
                             startActivity(tabintent);
                             finish();
                         }else{
                             Toast.makeText(getApplicationContext(),"로그인 실패",Toast.LENGTH_SHORT).show();
                             inputemail.setText("");
                             inputpw.setText("");
-                            progressDialog.dismiss();
                         }
+                        progressDialog.dismiss();
+
                     }
                 });
 

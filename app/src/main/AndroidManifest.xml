@@ -11,7 +11,13 @@
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity"/>
         <activity android:name=".SignupActivity"/>
-        <activity android:name=".TabActivity"/>
+        <activity android:name=".SecondMainActivity"/>
+        <activity android:name=".CategoryActivity"/>
+        <activity android:name=".WriteActivity"/>
+        <activity android:name=".MemberInfoActivity"/>
+        <activity android:name=".ChatActivity"/>
+        <activity android:name=".MapActivity"/>
+        <activity android:name=".ConnectActivity"/>
         <activity android:name=".IntroActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

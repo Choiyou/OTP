@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -18,13 +17,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
-import org.w3c.dom.Text;
-
-import java.util.regex.Pattern;
 
 /**
  * Created by os150 on 2020-05-19.
@@ -112,7 +106,7 @@ public class SignupActivity extends Activity {
                     memail.setError("이메일 형식이 아닙니다");
                 }
 
-                progressDialog.setMessage("회원가입중입니다 \n기다려주세요 :)");
+                progressDialog.setMessage("회원가입중입니다\n기다려주세요 :)");
                 progressDialog.show();
                 mAuth.createUserWithEmailAndPassword(email,pw).addOnCompleteListener(SignupActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -122,7 +116,7 @@ public class SignupActivity extends Activity {
                             com.example.os150.otp.UserInfo userInfo = new com.example.os150.otp.UserInfo(name,nickname,phonenum,email,profileimage);
                             mDatabase.child("userInfo").child(mAuth.getCurrentUser().getUid()).setValue(userInfo);
                             Toast.makeText(getApplicationContext(),"회원가입 성공", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(getApplicationContext(),TabActivity.class));
+                            startActivity(new Intent(getApplicationContext(),SecondMainActivity.class));
                             finish();
                         }else{
                             Toast.makeText(getApplicationContext(),"회원가입 실패",Toast.LENGTH_SHORT).show();
