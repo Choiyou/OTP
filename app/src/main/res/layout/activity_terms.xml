@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/cafe24simplehae"
+            android:text="약관동의"
+            android:textSize="23dp"
+            android:textStyle="bold"
+            android:id="@+id/textView" />
+
+        <CheckBox
+            android:id="@+id/allcb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:fontFamily="@font/cafe24simplehae"
+            android:text="모두 동의" />
+    </RelativeLayout>>
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="180dp">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/terms"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/terms"
+                android:textSize="12dp" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <CheckBox
+        android:id="@+id/termscb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="이용약관 동의 ( 필수 ) "
+        android:fontFamily="@font/cafe24simplehae"
+        />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="180dp">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/pip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/pip"
+                android:textSize="12dp" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <CheckBox
+        android:id="@+id/pipcb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="개인정보처리방침 동의 ( 필수 ) "
+        android:fontFamily="@font/cafe24simplehae"
+        />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_margin="5dp"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/nextbtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15dp"
+            android:text="다음"
+            android:layout_marginRight="10dp"
+            android:fontFamily="@font/cafe24simplehae"
+            android:background="@drawable/button_round"/>
+        <Button
+            android:id="@+id/backbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15dp"
+            android:text="취소"
+            android:fontFamily="@font/cafe24simplehae"
+            android:background="@drawable/button_round"/>
+    </LinearLayout>
+</LinearLayout>

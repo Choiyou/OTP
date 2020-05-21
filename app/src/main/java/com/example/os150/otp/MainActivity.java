@@ -48,8 +48,8 @@ public class MainActivity extends AppCompatActivity {
         signupbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-              Intent su = new Intent(getApplicationContext(),SignupActivity.class);
-              startActivity(su);
+              Intent termsintent = new Intent(getApplicationContext(),TermsActivity.class);
+              startActivity(termsintent);
               finish();
             }
         });
