@@ -41,10 +41,10 @@ public class MainActivity extends AppCompatActivity {
         FirebaseUser user = mAuth.getCurrentUser();
 
         final ProgressDialog progressDialog = new ProgressDialog(this);
-       /* if(user!=null){
+       if(user!=null){
             finish();
             startActivity(new Intent(getApplicationContext(), SecondMainActivity.class));
-        }*/
+        }
         signupbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -102,4 +102,5 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
 }

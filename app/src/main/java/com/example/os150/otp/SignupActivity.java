@@ -120,8 +120,9 @@ public class SignupActivity extends Activity {
                             finish();
                         }else{
                             Toast.makeText(getApplicationContext(),"회원가입 실패",Toast.LENGTH_SHORT).show();
-                            progressDialog.dismiss();
                         }
+                        progressDialog.dismiss();
+
                     }
                 });
             }
