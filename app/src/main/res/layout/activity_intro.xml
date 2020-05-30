@@ -23,4 +23,5 @@
         android:textSize="50dp"
         android:textStyle="bold"
         android:fontFamily="@font/cafe24simplehae"/>
+
 </LinearLayout>

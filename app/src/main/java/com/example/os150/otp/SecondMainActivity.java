@@ -1,5 +1,6 @@
 package com.example.os150.otp;
 
+import android.*;
 import android.app.Activity;
 import android.app.ActivityGroup;
 import android.app.LocalActivityManager;
@@ -9,6 +10,14 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TabHost;
+import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.gun0912.tedpermission.PermissionListener;
+import com.gun0912.tedpermission.TedPermission;
+
+import java.util.ArrayList;
 
 /**
  * Created by os150 on 2020-05-19.
@@ -19,6 +28,28 @@ public class SecondMainActivity extends ActivityGroup {
     protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_secondmain);
+
+            PermissionListener permissionListener = new PermissionListener() {
+                    @Override
+                    public void onPermissionGranted() {
+                            Toast.makeText(getApplicationContext(), "권한 설정 허용", Toast.LENGTH_SHORT).show();
+//                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+//                startActivity(intent);
+//                finish();
+                    }
+
+                    @Override
+                    public void onPermissionDenied(ArrayList<String> deniedPermissions) {
+                            Toast.makeText(getApplicationContext(), "권한 설정 실패", Toast.LENGTH_SHORT).show();
+
+                    }
+            };
+
+            TedPermission.with(getApplicationContext()).setPermissionListener(permissionListener)
+                    .setDeniedMessage("권한 설정 허용 하지 않을 경우 서비스를 제대로 이용하실수 없습니다.")
+                    .setPermissions(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE, android.Manifest.permission.CAMERA, android.Manifest.permission.ACCESS_COARSE_LOCATION).check();
+
+
 
             TabHost tabHost = (TabHost)findViewById(R.id.tabhost);
 

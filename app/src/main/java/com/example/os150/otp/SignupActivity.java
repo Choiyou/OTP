@@ -2,7 +2,10 @@ package com.example.os150.otp;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -67,11 +70,14 @@ public class SignupActivity extends Activity {
             public void onClick(View view) {
                 final String name = mname.getText().toString();
                 final String nickname = mnickname.getText().toString();
-                final  String phonenum = mphonenum.getText().toString();
+                final String phonenum = mphonenum.getText().toString();
                 final String email = memail.getText().toString();
                 final String pw = mpw.getText().toString();
-                final  String pwc = mpwc.getText().toString();
-                final String profileimage = getResources().getDrawable(R.drawable.drawable_userimage).toString();
+                final String pwc = mpwc.getText().toString();
+                Resources res= getApplicationContext().getResources();
+                Uri profileuri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE+"://"+ res.getResourcePackageName(R.drawable.drawable_userimage)+'/'+res.getResourceTypeName(R.drawable.drawable_userimage)+'/'+res.getResourceEntryName(R.drawable.drawable_userimage));
+                final String profileimage = profileuri.toString();
+
 
 
                 if(TextUtils.isEmpty(name)){

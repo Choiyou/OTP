@@ -12,10 +12,10 @@
         android:gravity="center"
         android:padding="30dp"
         android:orientation="horizontal">
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/pimage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:src ="@drawable/drawable_userimage"/>
         <TextView
             android:id="@+id/nicknametv"
