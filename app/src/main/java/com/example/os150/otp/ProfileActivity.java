@@ -8,11 +8,14 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -36,8 +39,10 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.io.ByteArrayOutputStream;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -50,8 +55,10 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ProfileActivity extends ActivityGroup {
 
     private static int ALBUM_IMAGE_REQUEST = 1;
+    private static int CAMERA_IMAGE_REQUEST = 2;
 
     int i = 0;
+
     Button profilereset;
     Button pwchange;
     Button withdrawal;
@@ -59,10 +66,17 @@ public class ProfileActivity extends ActivityGroup {
     Button nicknamechange;
     TextView nicknametv;
     CircleImageView profileimage;
+
     DatabaseReference mDatabase;
     FirebaseAuth mAuth;
     FirebaseUser user;
+
+    Uri camerUri = null;
     Uri imageUri;
+
+    SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMHH" + i++);
+    Date date = new Date();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,15 +96,12 @@ public class ProfileActivity extends ActivityGroup {
         profileimage = (CircleImageView) findViewById(R.id.pimage);
 
 
-
+        // RealTimaDB에서 로그인 User Nickname 불러오기
         mDatabase.child("users").child("userInfo").child(user.getUid().toString()).child("nickname").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
                 nicknametv.setText(dataSnapshot.getValue(String.class));
-
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.d("알림","데이터 Load실패");
@@ -98,18 +109,14 @@ public class ProfileActivity extends ActivityGroup {
             }
         });
 
+        //RealTimeDB에서 로그인 User Profile Image 불러오기
         mDatabase.child("users").child("userInfo").child(user.getUid().toString()).child("profileimage").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-               Log.v("알림","테스트 "+dataSnapshot.getValue(String.class));
                String profileimageUri = dataSnapshot.getValue(String.class);
-
                Uri imageuri = Uri.parse(profileimageUri);
-               Log.v("알림","테스트 2"+imageuri);
-
                if((imageuri.toString().charAt(0)=='a')==true){
-                   Log.v("알림","기본 이미지 "+imageuri.toString().charAt(0));
                    profileimage.setImageURI(imageuri);
                }
                else {
@@ -125,38 +132,59 @@ public class ProfileActivity extends ActivityGroup {
             }
         });
 
-
-                // 프로필 이미지 변경 클릭 시
-                profilereset.setOnClickListener(new View.OnClickListener() {
+        // 프로필 이미지 변경 클릭 시
+        profilereset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final AlertDialog.Builder profileresetQ = new AlertDialog.Builder(ProfileActivity.this);
+                profileresetQ.setTitle("사진 업로드");
+                profileresetQ.setCancelable(false).setPositiveButton("카메라", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(View view) {
-                        final AlertDialog.Builder profileresetQ = new AlertDialog.Builder(ProfileActivity.this);
-                        profileresetQ.setTitle("사진 업로드");
-                        profileresetQ.setCancelable(false).setPositiveButton("카메라", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                Log.v("알림", "camere 클릭");
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Log.v("알림", "camera 클릭");
+                        Intent camerai = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        if(camerai.resolveActivity(getPackageManager())!=null){
+                            File photofile = null;
+                            try{
+                                photofile = CameraImage();
+                            }catch (IOException e){
+                                e.printStackTrace();
                             }
-                        });
-                        profileresetQ.setNeutralButton("취소", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                Log.v("알림", "취소 클릭");
-                                dialogInterface.cancel();
+                            if(photofile!=null){
+
+                                camerUri = FileProvider.getUriForFile(getApplicationContext(),"com.example.os150.otp.fileprovider",photofile);
+                                camerai.putExtra(MediaStore.EXTRA_OUTPUT,camerUri);
+                                startActivityForResult(camerai,CAMERA_IMAGE_REQUEST);
+
                             }
-                        });
-                        profileresetQ.setNegativeButton("앨범", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                Log.v("알림", "앨범 클릭");
-                                Intent albumintent = new Intent(Intent.ACTION_GET_CONTENT);
-                                albumintent.setType("image/*");
-                                startActivityForResult(albumintent.createChooser(albumintent, "앨범 가져오기"), ALBUM_IMAGE_REQUEST);
-                            }
-                        });
-                        profileresetQ.show();
+                        }
+
+
+
                     }
                 });
+                profileresetQ.setNeutralButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Log.v("알림", "취소 클릭");
+                        dialogInterface.cancel();
+                    }
+                });
+                profileresetQ.setNegativeButton("앨범", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Log.v("알림", "앨범 클릭");
+                        Intent albumintent = new Intent(Intent.ACTION_GET_CONTENT);
+                        albumintent.setType("image/*");
+                        startActivityForResult(albumintent.createChooser(albumintent, "앨범 가져오기"), ALBUM_IMAGE_REQUEST);
+                    }
+                });
+
+                profileresetQ.show();
+            }
+        });
+
+
 
         //비밀번호 변경 클릭 시
         pwchange.setOnClickListener(new View.OnClickListener() {
@@ -258,8 +286,7 @@ public class ProfileActivity extends ActivityGroup {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 Toast.makeText(getApplicationContext(),"별명 변경 완료", Toast.LENGTH_SHORT).show();
-//                                finish();
-//                                startActivity(new Intent(getApplicationContext(),MainActivity.class));
+
                             }
                         });
 
@@ -279,17 +306,37 @@ public class ProfileActivity extends ActivityGroup {
 
     }
 
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
 
         try{
+            if(requestCode==CAMERA_IMAGE_REQUEST&&resultCode==RESULT_OK){
+
+                Log.v("알림","올라간 파일 명 : "+camerUri.getPath());
+                String camerauri = camerUri.getPath().toString().substring(5,camerUri.getPath().toString().length());
+                Log.v("알림","자른 경로"+camerauri);
+                Uri cameraUri = Uri.parse(camerauri);
+                profileimage.setImageURI(cameraUri);
+                mDatabase.child("users").child("userInfo").child(user.getUid().toString()).child("profileimage").setValue(cameraUri.toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Toast.makeText(getApplicationContext(),"프로필 데이터베이스 변경 성공", Toast.LENGTH_SHORT).show();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getApplicationContext(),"프로필 데이터베이스 변경 실패",Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+
+            }
             if(requestCode==ALBUM_IMAGE_REQUEST&&resultCode==RESULT_OK&&data!=null){
 
                 imageUri = data.getData();
-              //  File filePath = new File(imageUri.getPath());
-                //Log.v("알림","이미지 경로 : "+filePath);
                 final ProgressDialog progressDialog = new ProgressDialog(this);
                 progressDialog.setTitle("변경 중..");
                 progressDialog.show();
@@ -312,8 +359,6 @@ public class ProfileActivity extends ActivityGroup {
 
                 if(imageUri!=null) {
                     FirebaseStorage storage = FirebaseStorage.getInstance();
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMHH" + i++);
-                    Date date = new Date();
                     String filename = formatter.format(date) + ".png";
                     StorageReference srf = storage.getReferenceFromUrl("gs://otpdata-edb66.appspot.com").child("profileimages/" + filename);
                     srf.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -339,8 +384,6 @@ public class ProfileActivity extends ActivityGroup {
 
 
                 }
-            }else{
-                Toast.makeText(getApplicationContext(),"취소",Toast.LENGTH_SHORT).show();
             }
 
         }catch (Exception e){
@@ -348,6 +391,16 @@ public class ProfileActivity extends ActivityGroup {
         }
     }
 
+
+    //카메라 촬영 시 이미지 파일 생성
+    private File CameraImage() throws IOException{
+        String imagefilename = "cameraimage_"+String.valueOf(System.currentTimeMillis())+".jpg";
+        File storage = new File(Environment.getExternalStorageDirectory(),"/DCIM/Camera/"+imagefilename);
+        return storage;
+    }
+
+
+    // Uri로 부터 실제 경로 가져오기
     public String getRealPathFromURI (Uri contentUri){
        if(contentUri.getPath().startsWith("/storage")){
            return contentUri.getPath();
@@ -366,6 +419,9 @@ public class ProfileActivity extends ActivityGroup {
        }
        return null;
     }
+
+
+    //뒤로가기 버튼 클릭 시
     @Override
     public void onBackPressed() {
         super.onBackPressed();
