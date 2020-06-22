@@ -20,8 +20,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="우 리 동 네"
-        android:textSize="50dp"
+        android:textSize="60dp"
         android:textStyle="bold"
-        android:fontFamily="@font/cafe24simplehae"/>
+        android:fontFamily="@font/kyobohandwriting" />
 
 </LinearLayout>

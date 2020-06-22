@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -13,47 +12,48 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:padding="40dp"
-        android:text="SIGN IN"
-        android:textSize="50dp"
-        android:textStyle="bold"
-        android:fontFamily="@font/cafe24simplehae"
-        />
+        android:fontFamily="@font/kyobohandwriting"
+        android:padding="20dp"
+        android:text="우리동네 \n 로그인"
+        android:textSize="60dp"
+        android:textStyle="bold" />
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:orientation="horizontal">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ID   : "
-            android:textStyle="bold"
+            android:fontFamily="@font/kyobohandwriting"
+            android:text="ID : "
             android:textSize="30dp"
-            android:fontFamily="@font/cafe24simplehae"
-            />
+            android:textStyle="bold" />
+
         <EditText
             android:id="@+id/inputid"
             android:layout_width="220dp"
             android:layout_height="wrap_content"
-            android:singleLine="true"
             android:hint="이메일을 입력해주세요."
-            />
+            android:singleLine="true" />
 
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:orientation="horizontal">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/kyobohandwriting"
             android:text="pw : "
-            android:textStyle="bold"
             android:textSize="30dp"
-            android:fontFamily="@font/cafe24simplehae"
-            />
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/inputpw"
@@ -61,25 +61,23 @@
             android:layout_height="wrap_content"
             android:hint="비밀번호를 입력해주세요."
             android:inputType="textPassword"
-            android:singleLine="true"
-    />
+            android:singleLine="true" />
     </LinearLayout>
 
     <Button
-        android:id="@+id/signinbtn"
+        android:id="@+id/msigninbtn"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/button_round"
         android:layout_margin="10dp"
-        android:textSize="18dp"
-        android:text="Sign in"
-        android:fontFamily="@font/cafe24simplehaebold"
-    />
+        android:background="@drawable/button_round"
+        android:fontFamily="@font/kyobohandwriting"
+        android:text="로그인"
+        android:textSize="18dp" />
+
     <View
         android:layout_width="320dp"
         android:layout_height="2dp"
-        android:background="#b9b9b9"
-        />
+        android:background="#b9b9b9" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -89,13 +87,13 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/signupbtn"
+            android:id="@+id/msignupbtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="50dp"
-            android:text="회원가입"
-            android:fontFamily="@font/cafe24simplehaebold"
-            android:background="@android:color/transparent"/>
+            android:background="@android:color/transparent"
+            android:fontFamily="@font/kyobohandwriting"
+            android:text="회원가입" />
 
         <View
             android:layout_width="2dp"
@@ -103,19 +101,20 @@
             android:background="#b9b9b9" />
 
         <Button
-            android:id="@+id/pwresetbtn"
+            android:id="@+id/mpwresetbtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
-            android:text="비밀번호 재설정"
-            android:fontFamily="@font/cafe24simplehaebold"
-            android:background="@android:color/transparent"/>
+            android:background="@android:color/transparent"
+            android:fontFamily="@font/kyobohandwriting"
+            android:text="비밀번호 재설정" />
     </LinearLayout>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="15dp"
-        android:fontFamily="@font/cafe24simplehaebold"
-        android:textColor="#ff0000"
-        android:text="* 어플 사용 특성에 따라 로그인 후 이용 가능합니다.  *"/>
+        android:fontFamily="@font/kyobohandwriting"
+        android:text="* 어플 사용 특성에 따라 로그인 후 이용 가능합니다.  *"
+        android:textColor="#ff0000" />
 </LinearLayout>

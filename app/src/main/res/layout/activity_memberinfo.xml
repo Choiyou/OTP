@@ -23,9 +23,8 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:text="별명"
-            android:textStyle="bold"
             android:textSize="50dp"
-            android:fontFamily="@font/cafe24simplehae"/>
+            android:fontFamily="@font/kyobohandwriting" />
     </LinearLayout>
 
     <TextView
@@ -35,7 +34,7 @@
         android:layout_margin="10dp"
         android:text="내 게시글"
         android:textSize="40dp"
-        android:fontFamily="@font/cafe24simplehae"/>
+        android:fontFamily="@font/kyobohandwriting" />
     <View
         android:layout_width="300dp"
         android:layout_height="2dp"
@@ -48,7 +47,7 @@
         android:layout_margin="10dp"
         android:text="추천 게시글"
         android:textSize="40dp"
-        android:fontFamily="@font/cafe24simplehae"/>
+        android:fontFamily="@font/kyobohandwriting" />
     <View
         android:layout_width="300dp"
         android:layout_height="2dp"
@@ -60,6 +59,6 @@
         android:layout_margin="10dp"
         android:text="동네 설정"
         android:textSize="40dp"
-        android:fontFamily="@font/cafe24simplehae"/>
+        android:fontFamily="@font/kyobohandwriting" />
 
 </LinearLayout>

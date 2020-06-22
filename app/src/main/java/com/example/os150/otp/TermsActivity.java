@@ -20,6 +20,7 @@ public class TermsActivity extends Activity {
     CheckBox pipcb;
     Button nextbtn;
     Button backbutton;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,16 +29,16 @@ public class TermsActivity extends Activity {
         allcb = (CheckBox) findViewById(R.id.allcb);
         termscb = (CheckBox) findViewById(R.id.termscb);
         pipcb = (CheckBox) findViewById(R.id.pipcb);
-        nextbtn = (Button)findViewById(R.id.nextbtn);
-        backbutton = (Button)findViewById(R.id.backbutton);
+        nextbtn = (Button) findViewById(R.id.nextbtn);
+        backbutton = (Button) findViewById(R.id.backbutton);
 
         allcb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(allcb.isChecked()){
+                if (allcb.isChecked()) {
                     termscb.setChecked(true);
                     pipcb.setChecked(true);
-                }else{
+                } else {
                     termscb.setChecked(false);
                     pipcb.setChecked(false);
                 }
@@ -47,24 +48,25 @@ public class TermsActivity extends Activity {
             @Override
             public void onClick(View view) {
 
-                if(termscb.isChecked()&&pipcb.isChecked()){
-                    startActivity(new Intent(getApplicationContext(),SignupActivity.class));
+                if (termscb.isChecked() && pipcb.isChecked()) {
+                    startActivity(new Intent(getApplicationContext(), SignupActivity.class));
                     finish();
-                }else{
-                    Toast.makeText(getApplicationContext(),"모두 동의해주세요.",Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "모두 동의해주세요.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
         backbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(),MainActivity.class));
+                startActivity(new Intent(getApplicationContext(), MainActivity.class));
                 finish();
             }
         });
 
 
     }
+
     @Override
     public void onBackPressed() {
         //  super.onBackPressed();
