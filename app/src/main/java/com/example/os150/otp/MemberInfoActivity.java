@@ -63,13 +63,13 @@ public class MemberInfoActivity extends ActivityGroup {
                             return;
                         } else {
                             ImageUri = Uri.parse(profileimage); //프로필 imageUri문자열 값 Uri로 변경
+                            Log.v("알림", "데이터베이스에서 불러온 값 : " + profileimage);
+                            Log.v("알림", "불러온 값 Uri 변환 : " + ImageUri);
                             mprofileimage.setImageURI(Uri.parse(getRealPathFromUri(ImageUri)));
                         }
                     } else {
                         Log.v("알림", "null이 아님");
                     }
-                    Log.v("알림", "데이터베이스에서 불러온 값 : " + profileimage);
-                    Log.v("알림", "불러온 값 Uri 변환 : " + ImageUri);
 
 
                 }

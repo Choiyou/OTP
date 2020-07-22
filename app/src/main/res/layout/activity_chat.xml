@@ -1,18 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:gravity="center"
 
-    <FrameLayout
-        android:id="@+id/chatmain"
-        android:layout_width="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/liketab"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true">
+        android:layout_margin="10dp"
+        android:orientation="horizontal">
 
-    </FrameLayout>
+        <Button
+            android:id="@+id/allfriend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="전체 사용자"
+            android:textSize="20dp"
+            android:background="@android:color/transparent"
+            android:fontFamily="@font/kyobohandwriting" />
 
-</RelativeLayout>
+        <View
+            android:layout_width="1dp"
+            android:layout_height="45dp"
+            android:background="#000000" />
+
+        <Button
+            android:id="@+id/myfriend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="내 친구"
+            android:textSize="20dp"
+            android:background="@android:color/transparent"
+            android:fontFamily="@font/kyobohandwriting" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="45dp"
+            android:background="#000000" />
+
+        <Button
+            android:id="@+id/messagepage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="대화방"
+            android:textSize="20dp"
+            android:background="@android:color/transparent"
+            android:fontFamily="@font/kyobohandwriting" />
+    </LinearLayout>
+
+    <com.example.os150.otp.NonSwipe
+        android:id="@+id/viewPage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></com.example.os150.otp.NonSwipe>
+</LinearLayout>

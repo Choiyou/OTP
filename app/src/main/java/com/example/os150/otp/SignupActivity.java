@@ -126,16 +126,27 @@ public class SignupActivity extends Activity {
                 pd2.setMessage("회원가입이 진행되고 있습니다. \n 잠시만 기다려주세요...");
                 pd2.show();
 
-                mAuth.createUserWithEmailAndPassword(semail, spw).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                mAuth.createUserWithEmailAndPassword(semail, spw).
+                        addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
+
                         if (task.isSuccessful()) {
                             Uri image = Uri.parse("android.resource://com.example.os150.opt/drawable/" + getResources().getResourceEntryName(R.drawable.drawable_userimage));
                             DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+                            //회원가입 유저 정보 Database 저장
                             UserInfo userInfo = new UserInfo(sname, snickname, sphonenum, semail, image.toString());
                             mDatabase.child("userInfo").child(mAuth.getCurrentUser().getUid()).setValue(userInfo);
-                            Log.v("알림", "프로필 이미지 경로 : " + image.toString());
-                            Toast.makeText(getApplicationContext(), "회원가입 성공", Toast.LENGTH_SHORT).show();
+                            Log.v("알림", "프로필 이미지 경로 : " + image.toString() + "\n회원가입 성공");
+
+                            //Chat가능 User DataBase저장
+                            UserModel userModel = new UserModel();
+                            userModel.nickname = snickname;
+                            userModel.uid = mAuth.getCurrentUser().getUid();
+                            userModel.profileimage = image.toString();
+
+                            mDatabase.child("chatuserInfo").child(mAuth.getCurrentUser().getUid()).setValue(userModel);
+
                             startActivity(new Intent(getApplicationContext(), SecondMainActivity.class));
                             finish();
                         } else {

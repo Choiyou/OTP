@@ -26,13 +26,16 @@
         <activity android:name=".SignupActivity"/>
         <activity android:name=".SecondMainActivity"/>
         <activity android:name=".CategoryActivity"/>
+        <activity android:name=".ChatActivity" />
         <activity android:name=".WriteActivity"/>
         <activity android:name=".MemberInfoActivity"/>
-        <activity android:name=".ChatActivity"/>
+        <activity android:name=".MessageActivity" />
         <activity android:name=".MapActivity"/>
         <activity android:name=".ConnectActivity"/>
         <activity android:name=".TermsActivity"/>
         <activity android:name=".ProfileActivity"/>
+
+        <activity android:name=".User" />
         <activity android:name=".IntroActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

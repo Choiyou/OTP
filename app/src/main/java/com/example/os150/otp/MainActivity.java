@@ -24,6 +24,7 @@ import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     Button msigninbtn;
@@ -54,9 +55,11 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onPermissionDenied(ArrayList<String> deniedPermissions) {
+            public void onPermissionDenied(List<String> deniedPermissions) {
                 Toast.makeText(getApplicationContext(), "권한 설정 실패", Toast.LENGTH_SHORT).show();
+
             }
+
         };
         TedPermission.with(getApplicationContext()).setPermissionListener(permissionListener).setDeniedMessage("권한설정을 허용하지 않을 경우 서비스를 제대로 이용하실 수 없습니다.").setPermissions(android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 android.Manifest.permission.READ_EXTERNAL_STORAGE,

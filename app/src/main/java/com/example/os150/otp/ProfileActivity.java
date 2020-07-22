@@ -146,6 +146,7 @@ public class ProfileActivity extends ActivityGroup {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         mDatabase.child("userInfo").child(user.getUid()).setValue(null);
+                        mDatabase.child("chatuserInfo").child(user.getUid().toString()).setValue(null);
                         user.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
@@ -251,6 +252,7 @@ public class ProfileActivity extends ActivityGroup {
                         if (nchange.getText().length() == 0) {
                             dialogInterface.dismiss();
                         } else {
+                            mDatabase.child("chatuserInfo").child(user.getUid().toString()).child("nickname").setValue(nchange.getText().toString());
                             mDatabase.child("userInfo").child(user.getUid().toString()).child("nickname").setValue(nchange.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
@@ -321,6 +323,7 @@ public class ProfileActivity extends ActivityGroup {
                 String camerauri = cameraUri.getPath().toString().substring(5, cameraUri.getPath().toString().length());
                 Uri cameraURI = Uri.parse(camerauri);
                 pimageview.setImageURI(cameraURI);
+                mDatabase.child("chatuserInfo").child(user.getUid().toString()).child("profileimage").setValue(cameraURI.toString());
                 mDatabase.child("userInfo").child(user.getUid().toString()).child("profileimage").setValue(cameraURI.toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -342,10 +345,14 @@ public class ProfileActivity extends ActivityGroup {
                 albumP.setTitle("변경중 ...");
                 albumP.show();
 
-                Bitmap bitmapalbum = MediaStore.Images.Media.getBitmap(getContentResolver(), profileimageu);
-                Log.v("알림", "image Bitmap 경로 : " + bitmapalbum);
+                Uri albumimage;
 
-                pimageview.setImageBitmap(bitmapalbum);
+                //Bitmap bitmapalbum = MediaStore.Images.Media.getBitmap(getContentResolver(), profileimageu);
+                //   Log.v("알림", "image Bitmap 경로 : " + bitmapalbum);
+                pimageview.setImageURI(profileimageu);
+                //pimageview.setImageBitmap(bitmapalbum);
+                mDatabase.child("chatuserInfo").child(user.getUid().toString()).child("profileimage").setValue(profileimageu.toString());
+
                 mDatabase.child("userInfo").child(user.getUid().toString()).child("profileimage").setValue(profileimageu.toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {

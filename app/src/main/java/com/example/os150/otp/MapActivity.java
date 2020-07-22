@@ -8,7 +8,7 @@ import android.os.Bundle;
  * Created by os150 on 2020-05-19.
  */
 
-public class MapActivity extends Activity {
+public class MapActivity extends ActivityGroup {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
