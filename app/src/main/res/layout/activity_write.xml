@@ -16,7 +16,8 @@
             android:fontFamily="@font/kyobohandwriting"
             android:background="@android:color/transparent"
             android:drawableRight="@drawable/cameraicon"
-            android:text="사진 첨부" />
+            android:text="사진 첨부"
+            android:textSize="15dp" />
 
         <Spinner
             android:id="@+id/categoryspinner"
@@ -98,6 +99,7 @@
         android:layout_height="wrap_content"
         android:hint="원하는 가격을 입력해주세요."
         android:fontFamily="@font/kyobohandwriting"
+        android:inputType="number"
         android:singleLine="true" />
 
     <EditText

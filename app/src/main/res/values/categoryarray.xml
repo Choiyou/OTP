@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="카테고리">
+        <item>카테고리</item>
         <item>디지털, 가전</item>
         <item>가구, 인테리어</item>
         <item>유아동, 유아도서</item>
