@@ -13,7 +13,7 @@
         android:layout_gravity="center"
         android:text="C A T E G O R Y"
         android:textSize="45dp"
-        android:fontFamily="@font/cafe24simplehae"
+        android:fontFamily="@font/kyobohandwriting"
         android:textStyle="bold"/>
 
    <LinearLayout

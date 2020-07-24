@@ -35,6 +35,7 @@
         <activity android:name=".ConnectActivity"/>
         <activity android:name=".TermsActivity"/>
         <activity android:name=".ProfileActivity"/>
+        <activity android:name=".SelectCategoryActivity" />
 
         <activity android:name=".User" />
         <activity android:name=".IntroActivity">

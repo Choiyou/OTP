@@ -53,35 +53,39 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="#ABDDF2">
+        android:background="#cde9f5">
 
         <ImageView
             android:id="@+id/Bulletin_imageview1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="0.2dp"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:background="#FFFFFF" />
 
         <ImageView
             android:id="@+id/Bulletin_imageview2"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="0.2dp"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:background="#FFFFFF" />
 
         <ImageView
             android:id="@+id/Bulletin_imageview3"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="0.2dp"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:background="#FFFFFF" />
 
         <ImageView
             android:id="@+id/Bulletin_imageview4"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="0.2dp"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:background="#FFFFFF" />
 
     </LinearLayout>
 
@@ -91,7 +95,8 @@
         android:layout_height="wrap_content"
         android:hint="제목을 입력해주세요."
         android:fontFamily="@font/kyobohandwriting"
-        android:singleLine="true" />
+        android:singleLine="true"
+        android:maxLength="20" />
 
     <EditText
         android:id="@+id/write_price"
@@ -100,7 +105,8 @@
         android:hint="원하는 가격을 입력해주세요."
         android:fontFamily="@font/kyobohandwriting"
         android:inputType="number"
-        android:singleLine="true" />
+        android:singleLine="true"
+        android:maxLength="10" />
 
     <EditText
         android:id="@+id/write_Bulletin"
@@ -109,7 +115,8 @@
         android:layout_weight="0.55"
         android:ems="10"
         android:inputType="textMultiLine"
-        android:hint="게시글 내용을 입력해주세요. \n 비방 / 가품 / 판매금지 품목은 게시에 제한될 수 있습니다." />
+        android:hint="게시글 내용을 입력해주세요. \n 비방 / 가품 / 판매금지 품목은 게시에 제한될 수 있습니다."
+        android:maxLength="500" />
 
 
 </LinearLayout>
