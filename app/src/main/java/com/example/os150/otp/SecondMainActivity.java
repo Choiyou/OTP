@@ -24,7 +24,7 @@ public class SecondMainActivity extends ActivityGroup {
 
         if (user == null) {
             finish();
-            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+            startActivity(new Intent(getApplicationContext(), IntroActivity.class));
         }
 
 

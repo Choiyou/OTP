@@ -3,18 +3,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
-
     android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/liketab"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/allfriend"
+            android:id="@+id/allfriendpage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -29,7 +27,7 @@
             android:background="#000000" />
 
         <Button
-            android:id="@+id/myfriend"
+            android:id="@+id/myfriendpage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -55,7 +53,7 @@
     </LinearLayout>
 
     <com.example.os150.otp.NonSwipe
-        android:id="@+id/viewPage"
+        android:id="@+id/chatviewPage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"></com.example.os150.otp.NonSwipe>
 </LinearLayout>

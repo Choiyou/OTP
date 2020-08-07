@@ -7,13 +7,10 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-
-import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.DragEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 
@@ -22,63 +19,63 @@ import android.widget.Button;
  */
 
 public class ChatActivity extends AppCompatActivity {
-    ViewPager viewPage;
-    Button allfriend;
-    Button myfriend;
+    ViewPager chatviewPage;
+    Button allfriendpage;
+    Button myfriendpage;
     Button messagepage;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-        viewPage = (ViewPager) findViewById(R.id.viewPage);
-        allfriend = (Button) findViewById(R.id.allfriend);
-        myfriend = (Button) findViewById(R.id.myfriend);
+        chatviewPage = (ViewPager) findViewById(R.id.chatviewPage);
+        allfriendpage = (Button) findViewById(R.id.allfriendpage);
+        myfriendpage = (Button) findViewById(R.id.myfriendpage);
         messagepage = (Button) findViewById(R.id.messagepage);
 
 
-        viewPage.setAdapter(new pagerAdapter(getSupportFragmentManager()));
-        viewPage.setCurrentItem(0);
-        viewPage.getAdapter().notifyDataSetChanged();
-
-        viewPage.setOnDragListener(new View.OnDragListener() {
+        chatviewPage.setAdapter(new pagerAdapter(getSupportFragmentManager()));
+        chatviewPage.setCurrentItem(0);
+        chatviewPage.getAdapter().notifyDataSetChanged();
+        chatviewPage.setOnDragListener(new View.OnDragListener() {
             @Override
             public boolean onDrag(View view, DragEvent dragEvent) {
                 return false;
             }
         });
 
-        String color = "#F00332";
 
+        allfriendpage.setTag(0);
 
-        allfriend.setTag(0);
-
-        allfriend.setOnClickListener(movePageListener);
-        myfriend.setTag(1);
-        myfriend.setOnClickListener(movePageListener);
+        allfriendpage.setOnClickListener(PagingListener);
+        myfriendpage.setTag(1);
+        myfriendpage.setOnClickListener(PagingListener);
         messagepage.setTag(2);
-        messagepage.setOnClickListener(movePageListener);
+        messagepage.setOnClickListener(PagingListener);
 
         ActionBar ab = getSupportActionBar();
         ab.hide();
     }
 
-    View.OnClickListener movePageListener = new View.OnClickListener() {
+    View.OnClickListener PagingListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             int tag = (int) view.getTag();
-            viewPage.setCurrentItem(tag);
-            viewPage.getAdapter().notifyDataSetChanged();
+
+            chatviewPage.setCurrentItem(tag);
+            chatviewPage.getAdapter().notifyDataSetChanged();
+
             if (tag == 0) {
-                allfriend.setTextColor(Color.BLUE);
-                myfriend.setTextColor(Color.BLACK);
+                allfriendpage.setTextColor(Color.BLUE);
+                myfriendpage.setTextColor(Color.BLACK);
                 messagepage.setTextColor(Color.BLACK);
             } else if (tag == 1) {
-                allfriend.setTextColor(Color.BLACK);
-                myfriend.setTextColor(Color.BLUE);
+                allfriendpage.setTextColor(Color.BLACK);
+                myfriendpage.setTextColor(Color.BLUE);
                 messagepage.setTextColor(Color.BLACK);
             } else if (tag == 2) {
-                allfriend.setTextColor(Color.BLACK);
-                myfriend.setTextColor(Color.BLACK);
+                allfriendpage.setTextColor(Color.BLACK);
+                myfriendpage.setTextColor(Color.BLACK);
                 messagepage.setTextColor(Color.BLUE);
             }
 
@@ -86,10 +83,8 @@ public class ChatActivity extends AppCompatActivity {
     };
 
     private class pagerAdapter extends FragmentStatePagerAdapter {
-        public pagerAdapter(FragmentManager fm) {
-
-            super(fm);
-
+        public pagerAdapter(FragmentManager fragmentManager) {
+            super(fragmentManager);
         }
 
         @Override
@@ -122,7 +117,6 @@ public class ChatActivity extends AppCompatActivity {
 
 
     }
-
 
 
 }

@@ -17,18 +17,20 @@ public class NonSwipe extends ViewPager {
 
     public NonSwipe(Context context) {
         super(context);
-        setMySwipe();
+        MySwipe();
     }
 
     public NonSwipe(Context context, AttributeSet attrs) {
         super(context, attrs);
-        setMySwipe();
+        MySwipe();
     }
 
+    //하위 View로 이벤트 전달
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
         return false;
     }
+
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -36,17 +38,18 @@ public class NonSwipe extends ViewPager {
     }
 
 
-    private void setMySwipe() {
+    private void MySwipe() {
         try {
-            Class<?> viewpager = ViewPager.class;
-            Field swipe = viewpager.getDeclaredField("SWIPE");
-            swipe.setAccessible(true);
+            Class<?> VP = ViewPager.class;
+            Field swipe = VP.getDeclaredField("SWIPE");//필드를 가져와
+            swipe.setAccessible(true); //해당 필드의  접근을 허용
             swipe.set(this, new MySwipe(getContext()));
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    //화면 전환 속도 조정
     public class MySwipe extends Scroller {
         public MySwipe(Context context) {
             super(context, new DecelerateInterpolator());

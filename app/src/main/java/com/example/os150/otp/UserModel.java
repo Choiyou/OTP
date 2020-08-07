@@ -8,6 +8,5 @@ public class UserModel {
     public String uid;
     public String nickname;
     public String profileimage;
-    public String comment;
-//    public String pushToken;
+//    public String comment;
 }

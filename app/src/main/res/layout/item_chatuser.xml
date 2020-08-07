@@ -22,17 +22,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="닉네임"
-            android:fontFamily="@font/kyobohandwriting" />
-
-        <TextView
-            android:id="@+id/chatuseritem_tv2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_gravity="center"
-            android:text=""
-            android:fontFamily="@font/kyobohandwriting" />
+            android:fontFamily="@font/kyobohandwriting"
+            android:text="닉네임" />
     </LinearLayout>
 
     <View

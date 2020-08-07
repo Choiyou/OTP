@@ -14,7 +14,7 @@ import android.widget.Toast;
  * Created by os150 on 2020-05-20.
  */
 
-public class TermsActivity extends Activity {
+public class TermsActivity extends Activity { //
     CheckBox allcb;
     CheckBox termscb;
     CheckBox pipcb;
@@ -67,6 +67,7 @@ public class TermsActivity extends Activity {
 
     }
 
+    //BackButton 클릭 x
     @Override
     public void onBackPressed() {
         //  super.onBackPressed();

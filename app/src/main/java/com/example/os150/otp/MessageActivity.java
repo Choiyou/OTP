@@ -1,7 +1,6 @@
 package com.example.os150.otp;
 
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
@@ -18,6 +17,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -34,6 +35,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
@@ -43,11 +45,13 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class MessageActivity extends AppCompatActivity {
     Button sendbtn;
     EditText messageedit;
-    RecyclerView recyclerView;
+    RecyclerView message_recyclerView;
     String chatRoomname;
     String destinationUid;
+
     SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd HH:mm");
     UserModel destinationuserModel;
+
 
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -60,113 +64,110 @@ public class MessageActivity extends AppCompatActivity {
 
         sendbtn = (Button) findViewById(R.id.sendbtn);
         messageedit = (EditText) findViewById(R.id.messageedit);
-        recyclerView = (RecyclerView) findViewById(R.id.messageActivity_recyclerview);
+        message_recyclerView = (RecyclerView) findViewById(R.id.messageActivity_recyclerview);
         destinationUid = getIntent().getStringExtra("destinationUid");
+
+        //ActionBar 숨기기
         ActionBar ab = getSupportActionBar();
         ab.hide();
 
-        checkchatRoom();
+
+        //채팅방 확인 함수
+        ChackChatRoom();
 
         sendbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ChatModel chatModel = new ChatModel();
+                final ChatModel chatModel = new ChatModel();
+
+                //ChatUser의 로그인 user와 상대방 Uid chatModel에 저장
                 chatModel.users.put(user.getUid(), true);
                 chatModel.users.put(destinationUid, true);
 
+                //채팅방이 없을 경우
                 if (chatRoomname == null) {
+                    //Database에 chatModel 값 저장 ( 로그인 user, 상대방 )
                     mDatabase.child("mychatroom").push().setValue(chatModel).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            checkchatRoom();
-                            Log.v("알림", "채팅 방 생성");
+                            ChackChatRoom(); // 채팅방 확인 함수
+                            Log.v("알림", "채팅 방 생성 성공");
 
                         }
                     });
-                } else {
-                    ChatModel.Comment comment = new ChatModel.Comment();
+                }
+                //채팅방이 있을 경우
+                else {
+                    final ChatModel.Comment comment = new ChatModel.Comment();
+                    //ChatModel의 Comment에 uid, message, timestamp 저장
                     comment.uid = user.getUid();
                     comment.message = messageedit.getText().toString();
                     comment.timestamp = ServerValue.TIMESTAMP;
-                    mDatabase.child("mychatroom").child(chatRoomname).child("comments").push().setValue(comment).addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            messageedit.setText("");
 
-                        }
-                    });
-                }
-            }
-        });
-
-
-    }
-
-    void checkchatRoom() {
-        mDatabase.child("mychatroom").orderByChild("users/" + user.getUid()).equalTo(true).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    ChatModel chatModel = snapshot.getValue(ChatModel.class);
-                    if (chatModel.users.containsKey(destinationUid)) {
-                        chatRoomname = snapshot.getKey();
-                        sendbtn.setEnabled(true);
-                        recyclerView.setLayoutManager(new LinearLayoutManager(MessageActivity.this));
-                        recyclerView.setAdapter(new RecyclerViewAdapter());
-                        Log.v("알림", "ChatRoomname : " + chatRoomname);
-
+                    //message 입력 창이 비어있지 않아야 전송
+                    if (messageedit.length() != 0) {
+                        //DataBase에 메시지 입력
+                        mDatabase.child("mychatroom").child(chatRoomname).child("comments").push().setValue(comment).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                messageedit.setText("");
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.v("알림", "오류" + e);
+                            }
+                        });
                     }
                 }
             }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
         });
+
 
     }
 
+
     class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-        List<ChatModel.Comment> comments;
+        List<ChatModel.Comment> comments = new ArrayList<>();
 
         public RecyclerViewAdapter() {
-            comments = new ArrayList<>();
+            //Database에서 "chatuserInfo"에서 상대방 Uid의 데이터 가져오기
             mDatabase.child("chatuserInfo").child(destinationUid).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     destinationuserModel = dataSnapshot.getValue(UserModel.class);
-                    getMessageList();
+                    getMessage();
                 }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-
+                    Log.v("알림", "데이터 불러오기 실패");
                 }
             });
         }
 
-        void getMessageList() {
+        void getMessage() {
+            //채팅방의 comment 값 가져오기
             mDatabase.child("mychatroom").child(chatRoomname).child("comments").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
+                    //리스트 초기화
                     comments.clear();
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         comments.add(snapshot.getValue(ChatModel.Comment.class));
                     }
-                    notifyDataSetChanged();
-
-                    recyclerView.scrollToPosition(comments.size() - 1);
-
+                    notifyDataSetChanged(); // Listview 항목 새로 고침
+                    message_recyclerView.scrollToPosition(comments.size() - 1); // 메시지 List의 가장 하단으로 스크롤
                 }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-
+                    Log.v("알림", "데이터 불러오기 실패");
                 }
             });
         }
 
+        //item_message와 연결
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -174,30 +175,42 @@ public class MessageActivity extends AppCompatActivity {
             return new MessageViewHolder(view);
         }
 
+        //실제 Data와 VIewHolder연결
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             MessageViewHolder messageViewHolder = ((MessageViewHolder) holder);
-            if (comments.get(position).uid.equals(user.getUid())) {
-                messageViewHolder.textView_message.setText(comments.get(position).message);
-                messageViewHolder.textView_message.setBackgroundResource(R.drawable.rightbubble);
-                messageViewHolder.linearlayout_destination.setVisibility(recyclerView.INVISIBLE);
-                messageViewHolder.textView_message.setTextSize(20);
-                messageViewHolder.linearLayout_main.setGravity(Gravity.RIGHT);
-            } else {
-                messageViewHolder.textView_nickname.setText(destinationuserModel.nickname);
-                messageViewHolder.linearlayout_destination.setVisibility(View.VISIBLE);
-                messageViewHolder.textView_message.setBackgroundResource(R.drawable.leftbubble);
-                messageViewHolder.textView_message.setText(comments.get(position).message);
-                messageViewHolder.textView_message.setTextSize(20);
-                messageViewHolder.linearLayout_main.setGravity(Gravity.LEFT);
-            }
+
             long unixTime = (long) comments.get(position).timestamp;
+
             Date date = new Date(unixTime);
             format.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
             String time = format.format(date);
+
+            //메시지의 Uid가 로그인한 User의 Uid와 동일한 경우 ( 내가 보낸 메시지 )
+            if (comments.get(position).uid.equals(user.getUid())) {
+                messageViewHolder.textView_message.setText(comments.get(position).message);
+                messageViewHolder.linearlayout_destination.setVisibility(message_recyclerView.INVISIBLE);
+                messageViewHolder.textView_message.setTextSize(16);
+                messageViewHolder.linearLayout_main.setGravity(Gravity.RIGHT); // 오른쪽에 표시
+            }
+            //아닌 경우 ( 상대방이 보낸 메시지 )
+            else {
+                messageViewHolder.textView_nickname.setText(destinationuserModel.nickname);
+                messageViewHolder.linearlayout_destination.setVisibility(View.VISIBLE);
+                messageViewHolder.textView_message.setText(comments.get(position).message);
+                messageViewHolder.textView_message.setTextSize(16);
+                if (destinationuserModel.profileimage.charAt(0) != 'a') {
+                    Glide.with(messageViewHolder.itemView.getContext()).load(destinationuserModel.profileimage).into(messageViewHolder.imageview_profile);
+                }
+                Glide.with(messageViewHolder.itemView.getContext()).load(R.drawable.drawable_userimage).into(messageViewHolder.imageview_profile);
+                messageViewHolder.linearLayout_main.setGravity(Gravity.LEFT); // 왼쪽에 표시
+            }
+
+            // 메시지 보낸 시간 표시
             messageViewHolder.textView_timestamp.setText(time);
         }
 
+        //RecyclerVIew 안에 들어갈 VIewHolder의 갯수는 comments의 크기와 같다
         @Override
         public int getItemCount() {
             return comments.size();
@@ -205,6 +218,7 @@ public class MessageActivity extends AppCompatActivity {
     }
 
 
+    //ViewHolder에 들어갈 Item 지정
     private class MessageViewHolder extends RecyclerView.ViewHolder {
         TextView textView_message;
         TextView textView_timestamp;
@@ -222,5 +236,33 @@ public class MessageActivity extends AppCompatActivity {
             linearlayout_destination = (LinearLayout) view.findViewById(R.id.messageItem_linearlayout_destination);
             linearLayout_main = (LinearLayout) view.findViewById(R.id.messageItem_LinearLayout);
         }
+    }
+
+    //채팅방 확인 함수
+    void ChackChatRoom() {
+        //DataBase에서 "mychatroom"항목의 users가 로그인한 유저의 Uid와 동일한 경우
+        mDatabase.child("mychatroom").orderByChild("users/" + user.getUid()).equalTo(true).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    ChatModel chatModel = snapshot.getValue(ChatModel.class); //chatModel에 그 값 불러온다
+                    if (chatModel.users.containsKey(destinationUid)) { // 만약 불러온 user의 값이 상대방 Uid와 동일한 경우
+                        chatRoomname = snapshot.getKey(); //채팅방 이름 가져오고
+                        sendbtn.setEnabled(true);
+                        message_recyclerView.setLayoutManager(new LinearLayoutManager(MessageActivity.this));
+                        message_recyclerView.setAdapter(new RecyclerViewAdapter());
+                        Log.v("알림", "ChatRoomname : " + chatRoomname);
+
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.v("알림", "데이터 불러오기 실패");
+
+            }
+        });
+
     }
 }

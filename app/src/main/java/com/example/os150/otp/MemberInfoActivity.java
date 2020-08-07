@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -65,7 +66,8 @@ public class MemberInfoActivity extends ActivityGroup {
                             ImageUri = Uri.parse(profileimage); //프로필 imageUri문자열 값 Uri로 변경
                             Log.v("알림", "데이터베이스에서 불러온 값 : " + profileimage);
                             Log.v("알림", "불러온 값 Uri 변환 : " + ImageUri);
-                            mprofileimage.setImageURI(Uri.parse(getRealPathFromUri(ImageUri)));
+                            //profileimage.setImageURI(Uri.parse(getRealPathFromUri(ImageUri)));
+                            Glide.with(getApplicationContext()).load(profileimage).into(mprofileimage);
                         }
                     } else {
                         Log.v("알림", "null이 아님");

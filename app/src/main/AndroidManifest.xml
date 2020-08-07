@@ -37,7 +37,6 @@
         <activity android:name=".ProfileActivity"/>
         <activity android:name=".SelectCategoryActivity" />
 
-        <activity android:name=".User" />
         <activity android:name=".IntroActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
