@@ -122,6 +122,7 @@ public class MyFriendFragment extends Fragment {
                 Glide.with(holder.itemView.getContext()).load(uriprofiles).into(((CustomViewHolder) holder).chatuserProfile);
                 ((CustomViewHolder) holder).chatnickname.setText(MyFriendModels.get(position).nickname);
             } else {
+                Glide.with(holder.itemView.getContext()).load(R.drawable.drawable_userimage).into(((CustomViewHolder) holder).chatuserProfile);
                 ((CustomViewHolder) holder).chatnickname.setText(MyFriendModels.get(position).nickname);
             }
             //ItemView 클릭시

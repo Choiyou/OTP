@@ -118,6 +118,7 @@ public class AllFriendFragment extends Fragment {
 
             } else {
                 ((CustomViewHolder) holder).cnickname.setText(AllFriendModels.get(position).nickname);
+                Glide.with(holder.itemView.getContext()).load(R.drawable.drawable_userimage).into(((CustomViewHolder) holder).chatuserP);
 
             }
 

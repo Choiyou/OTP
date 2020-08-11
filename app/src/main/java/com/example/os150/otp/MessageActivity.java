@@ -201,8 +201,9 @@ public class MessageActivity extends AppCompatActivity {
                 messageViewHolder.textView_message.setTextSize(16);
                 if (destinationuserModel.profileimage.charAt(0) != 'a') {
                     Glide.with(messageViewHolder.itemView.getContext()).load(destinationuserModel.profileimage).into(messageViewHolder.imageview_profile);
+                } else {
+                    Glide.with(messageViewHolder.itemView.getContext()).load(R.drawable.drawable_userimage).into(messageViewHolder.imageview_profile);
                 }
-                Glide.with(messageViewHolder.itemView.getContext()).load(R.drawable.drawable_userimage).into(messageViewHolder.imageview_profile);
                 messageViewHolder.linearLayout_main.setGravity(Gravity.LEFT); // 왼쪽에 표시
             }
 
