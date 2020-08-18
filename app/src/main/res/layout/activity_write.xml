@@ -49,7 +49,6 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_weight="0.35"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -57,34 +56,38 @@
 
         <ImageView
             android:id="@+id/Bulletin_imageview1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="380dp"
+            android:layout_height="130dp"
             android:layout_margin="0.2dp"
             android:layout_weight="1"
+            android:scaleType="fitXY"
             android:background="#FFFFFF" />
 
         <ImageView
             android:id="@+id/Bulletin_imageview2"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="380dp"
+            android:layout_height="130dp"
             android:layout_margin="0.2dp"
             android:layout_weight="1"
+            android:scaleType="fitXY"
             android:background="#FFFFFF" />
 
         <ImageView
             android:id="@+id/Bulletin_imageview3"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="380dp"
+            android:layout_height="130dp"
             android:layout_margin="0.2dp"
             android:layout_weight="1"
+            android:scaleType="fitXY"
             android:background="#FFFFFF" />
 
         <ImageView
             android:id="@+id/Bulletin_imageview4"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="380dp"
+            android:layout_height="130dp"
             android:layout_margin="0.2dp"
             android:layout_weight="1"
+            android:scaleType="fitXY"
             android:background="#FFFFFF" />
 
     </LinearLayout>
