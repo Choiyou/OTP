@@ -107,7 +107,7 @@ public class MessagePageFragment extends Fragment {
 
                 }
             }
-            //문자열 형태로 내림차순 정렬하여 TreeMap에 저장 TreeMap의 kety값은 String이며 value는 ChatModel의 Comment에서 가져온다.
+            //문자열 형태로 내림차순 정렬하여 TreeMap에 저장 TreeMap의 key값은 String이며 value는 ChatModel의 Comment에서 가져온다.
             Map<String, ChatModel.Comment> commentMap = new TreeMap<>(Collections.<String>reverseOrder());
             commentMap.putAll(MessagePageModel.get(position).comments); //TreeMap으로 comments복사
             String lastmessage = commentMap.keySet().toArray()[0].toString(); //TreeMap 의 key의 배열값을 String값으로 변환하여 문자열 저장

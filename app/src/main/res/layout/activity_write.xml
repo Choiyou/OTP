@@ -117,6 +117,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="0.55"
         android:ems="10"
+        android:fontFamily="@font/kyobohandwriting"
         android:inputType="textMultiLine"
         android:hint="게시글 내용을 입력해주세요. \n 비방 / 가품 / 판매금지 품목은 게시에 제한될 수 있습니다."
         android:maxLength="500" />

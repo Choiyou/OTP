@@ -15,6 +15,7 @@ import android.location.LocationManager;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
@@ -76,13 +77,14 @@ public class WriteActivity extends Activity {
     double longi, lati; // 경도, 위도
 
     Uri write_albumuri;
-
     Uri Bulletin_image1;
     Uri Bulletin_image2;
     Uri Bulletin_image3;
     Uri Bulletin_image4;
 
+
     int count;
+    int i = 0;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -113,6 +115,8 @@ public class WriteActivity extends Activity {
                 walbumIntent.setType("image/*");
                 walbumIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true); // 여러 이미지 항목 선택 가능
                 walbumIntent.setAction(Intent.ACTION_GET_CONTENT);
+                walbumIntent.setAction(Intent.ACTION_OPEN_DOCUMENT);
+                walbumIntent.addCategory(Intent.CATEGORY_OPENABLE);
                 startActivityForResult(walbumIntent, WRITE_ALBUM_IMAGE_REQUEST);
             }
         });
@@ -124,6 +128,7 @@ public class WriteActivity extends Activity {
                 String selectcategory = parent.getItemAtPosition(position).toString();
                 Log.v("알림", " 선택한 항목 : " + selectcategory);
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
 
@@ -143,7 +148,6 @@ public class WriteActivity extends Activity {
                         return;
                     }
                     try {
-
                         locationM.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, gpsLocationListener); //GPS 이용 위치 제공 1초, 1미터당 해당 값 갱신
                         locationM.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 1, gpsLocationListener); // 기지국, WIFI를 이용한 위치 제공 1초, 1미터당 해당 값 갱신
                     } catch (SecurityException e) {
@@ -211,6 +215,10 @@ public class WriteActivity extends Activity {
                 Uri BulletinImage4 = Bulletin_image4;
                 double Lat = lati;
                 double Lng = longi;
+                Log.v("알림", "이미지 1 : " + BulletinImage1);
+                Log.v("알림", "이미지 2: " + BulletinImage2);
+                Log.v("알림", "이미지 3 : " + BulletinImage3);
+                Log.v("알림", "이미지 4 : " + BulletinImage4);
 
 
                 if (Title.length() == 0) {
@@ -247,6 +255,8 @@ public class WriteActivity extends Activity {
 
                     finish();
                     startActivity(new Intent(getApplicationContext(), SecondMainActivity.class));
+                    //   startActivity(new Intent(getApplicationContext(),PostActivity.class));
+
                 }
             }
 
@@ -268,67 +278,62 @@ public class WriteActivity extends Activity {
                 write_albumuri = data.getData(); //Uri 가져오기
                 ClipData cd = data.getClipData();
                 String write_albumImage = formatter.format(date);
-                StorageReference wsrf = storage.getReferenceFromUrl("gs://otpdata-edb66.appspot.com/").child("postImage/" + write_albumImage + "_" + count++ + ".png");
+//                StorageReference wsrf = storage.getReferenceFromUrl("gs://otpdata-edb66.appspot.com/").child("postImage/" + write_albumImage + "_" + count++ + ".png");
 
                 if (cd != null) {
-                    for (int i = 0; i < 4; i++) {
-                        if (i < cd.getItemCount()) {
-                            final Uri albumnumber = cd.getItemAt(i).getUri();
-                            switch (i) {
-                                case 0:
-                                    wsrf.putFile(albumnumber).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                        @Override
-                                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                            Uri write_downloadalbumUri1 = taskSnapshot.getDownloadUrl();
-                                            Glide.with(getApplicationContext()).load(albumnumber).into(Bulletin_imageview1);
-                                            //         bulletin.BulletinImage1 = write_downloadalbumUri1;
-                                            Bulletin_image1 = write_downloadalbumUri1;
+                    if (i < cd.getItemCount()) {
 
-                                        }
-                                    });
-                                    break;
-                                case 1:
-                                    wsrf.putFile(albumnumber).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                        @Override
-                                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                            Uri write_downloadalbumUri2 = taskSnapshot.getDownloadUrl();
-                                            Glide.with(getApplicationContext()).load(albumnumber).into(Bulletin_imageview2);
-                                            //           bulletin.BulletinImage2 = write_downloadalbumUri2;
-                                            Bulletin_image2 = write_downloadalbumUri2;
+                        for (i = 0; i < 4; i++) {
+                            try {
+                                StorageReference wsrf = storage.getReferenceFromUrl("gs://otpdata-edb66.appspot.com/").child("postImage/" + (write_albumImage + "_" + count++) + "_" + i + ".png");
+                                Uri albumnumber = cd.getItemAt(i).getUri();
+                                Log.v("알림", "i = " + i);
+                                Log.v("알림", "이미지 Uri : " + albumnumber);
 
-                                        }
-                                    });
-                                    break;
-                                case 2:
-                                    wsrf.putFile(albumnumber).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                        @Override
-                                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                            Uri write_downloadalbumUri3 = taskSnapshot.getDownloadUrl();
-                                            Glide.with(getApplicationContext()).load(albumnumber).into(Bulletin_imageview3);
-                                            //             bulletin.BulletinImage3 = write_downloadalbumUri3;
-                                            Bulletin_image3 = write_downloadalbumUri3;
+                                wsrf.putFile(albumnumber).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                    @Override
+                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                        Uri downloadUri = taskSnapshot.getDownloadUrl();
+                                        Log.v("알림", "실제 다운로드된 이미지 : " + downloadUri);
 
-                                        }
-                                    });
-                                    break;
-                                case 3:
-                                    wsrf.putFile(albumnumber).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                        @Override
-                                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                            Uri write_downloadalbumUri4 = taskSnapshot.getDownloadUrl();
-                                            Glide.with(getApplicationContext()).load(albumnumber).into(Bulletin_imageview4);
-                                            //               bulletin.BulletinImage4 = write_downloadalbumUri4;
-                                            Bulletin_image4 = write_downloadalbumUri4;
 
-                                        }
-                                    });
-                                    break;
+                                    }
+
+                                });
+                                switch (i) {
+                                    case 0:
+                                        Glide.with(getApplicationContext()).load(albumnumber).into(Bulletin_imageview1);
+                                        Log.v("알림", "낄낄 : " + albumnumber);
+                                        Bulletin_image1 = albumnumber;
+                                        break;
+                                    case 1:
+                                        Glide.with(getApplicationContext()).load(albumnumber).into(Bulletin_imageview2);
+                                        Bulletin_image2 = albumnumber;
+                                        Log.v("알림", "낄낄 : " + albumnumber);
+
+                                        break;
+                                    case 2:
+                                        Glide.with(getApplicationContext()).load(albumnumber).into(Bulletin_imageview3);
+                                        Bulletin_image3 = albumnumber;
+                                        Log.v("알림", "낄낄 : " + albumnumber);
+                                        break;
+                                    case 3:
+                                        Glide.with(getApplicationContext()).load(albumnumber).into(Bulletin_imageview4);
+                                        Bulletin_image4 = albumnumber;
+                                        Log.v("알림", "낄낄 : " + albumnumber);
+                                        break;
+                                }
+
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
-
                         }
 
                     }
                 } else if (write_albumuri != null) {
+                    StorageReference wsrf = storage.getReferenceFromUrl("gs://otpdata-edb66.appspot.com/").child("postImage/" + write_albumImage + "_" + count++ + ".png");
+
                     wsrf.putFile(write_albumuri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
