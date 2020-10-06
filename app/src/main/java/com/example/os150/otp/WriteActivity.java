@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -32,9 +33,13 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -49,6 +54,7 @@ import java.util.Locale;
 
 public class WriteActivity extends Activity {
     private static int WRITE_ALBUM_IMAGE_REQUEST = 1;
+
 
     Button okbtn;
     Button insertphoto;
@@ -221,11 +227,12 @@ public class WriteActivity extends Activity {
                 Log.v("알림", "이미지 4 : " + BulletinImage4);
 
 
+
                 if (Title.length() == 0) {
                     write_title.setError("제목을 입력해주세요.");
                 } else if (Bulletins.length() == 0) {
                     write_Bulletin.setError("내용을 입력해주세요.");
-                } else if (Category.equals("카테고리")) {
+                } else if (Category.equals("")) {
                     Toast.makeText(getApplicationContext(), "카테고리를 선택해주세요.", Toast.LENGTH_SHORT).show();
 
                 } else if (write_price.getText().length() == 0) {
@@ -247,8 +254,7 @@ public class WriteActivity extends Activity {
                         e.printStackTrace();
                     }
                     mDatabase.child("Bulletin").child("AllBulletin").push().setValue(bulletin);
-                    mDatabase.child("Bulletin").child(Category).push().setValue(bulletin);
-
+                    mDatabase.child("Bulletin").child(bulletin.Category).push().setValue(bulletin);
                     write_title.setText(null);
                     write_price.setText(null);
                     write_Bulletin.setText(null);
@@ -269,6 +275,8 @@ public class WriteActivity extends Activity {
         if (requestCode == WRITE_ALBUM_IMAGE_REQUEST) {
             if (resultCode == RESULT_OK) {
 
+                final ProgressDialog progressDialog = new ProgressDialog(this);
+
                 //기존 이미지 지우기
                 Bulletin_imageview1.setImageResource(0);
                 Bulletin_imageview2.setImageResource(0);
@@ -281,6 +289,8 @@ public class WriteActivity extends Activity {
 //                StorageReference wsrf = storage.getReferenceFromUrl("gs://otpdata-edb66.appspot.com/").child("postImage/" + write_albumImage + "_" + count++ + ".png");
 
                 if (cd != null) {
+                    progressDialog.setTitle("게시글 이미지 업로드");
+                    progressDialog.show();
                     if (i < cd.getItemCount()) {
 
                         for (i = 0; i < 4; i++) {
@@ -293,34 +303,41 @@ public class WriteActivity extends Activity {
                                 wsrf.putFile(albumnumber).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                     @Override
                                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                        progressDialog.dismiss();
                                         Uri downloadUri = taskSnapshot.getDownloadUrl();
                                         Log.v("알림", "실제 다운로드된 이미지 : " + downloadUri);
 
 
                                     }
 
+                                }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                                    @Override
+                                    public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                                        double progress = (100 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                                        progressDialog.setMessage("업로드 : " + ((int) progress) + "%");
+                                    }
                                 });
                                 switch (i) {
                                     case 0:
                                         Glide.with(getApplicationContext()).load(albumnumber).into(Bulletin_imageview1);
-                                        Log.v("알림", "낄낄 : " + albumnumber);
+                                        Log.v("알림", "이미지1 : " + albumnumber);
                                         Bulletin_image1 = albumnumber;
                                         break;
                                     case 1:
                                         Glide.with(getApplicationContext()).load(albumnumber).into(Bulletin_imageview2);
                                         Bulletin_image2 = albumnumber;
-                                        Log.v("알림", "낄낄 : " + albumnumber);
+                                        Log.v("알림", "이미지2 : " + albumnumber);
 
                                         break;
                                     case 2:
                                         Glide.with(getApplicationContext()).load(albumnumber).into(Bulletin_imageview3);
                                         Bulletin_image3 = albumnumber;
-                                        Log.v("알림", "낄낄 : " + albumnumber);
+                                        Log.v("알림", "이미지3 : " + albumnumber);
                                         break;
                                     case 3:
                                         Glide.with(getApplicationContext()).load(albumnumber).into(Bulletin_imageview4);
                                         Bulletin_image4 = albumnumber;
-                                        Log.v("알림", "낄낄 : " + albumnumber);
+                                        Log.v("알림", "이미지4 : " + albumnumber);
                                         break;
                                 }
 
@@ -332,14 +349,23 @@ public class WriteActivity extends Activity {
 
                     }
                 } else if (write_albumuri != null) {
+                    progressDialog.setTitle("게시글 이미지 업로드");
+                    progressDialog.show();
                     StorageReference wsrf = storage.getReferenceFromUrl("gs://otpdata-edb66.appspot.com/").child("postImage/" + write_albumImage + "_" + count++ + ".png");
 
                     wsrf.putFile(write_albumuri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            progressDialog.dismiss();
                             Uri write_downloadalbumUri1 = taskSnapshot.getDownloadUrl();
                             Glide.with(getApplicationContext()).load(write_albumuri).into(Bulletin_imageview1);
                             Bulletin_image1 = write_downloadalbumUri1;
+                        }
+                    }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                            double progress = (100 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                            progressDialog.setMessage("업로드 : " + ((int) progress) + "%");
                         }
                     });
                 }

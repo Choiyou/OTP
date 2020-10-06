@@ -48,7 +48,7 @@ public class MessageActivity extends AppCompatActivity {
     RecyclerView message_recyclerView;
     String chatRoomname;
     String destinationUid;
-
+    String pushId;
     SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd HH:mm");
     UserModel destinationuserModel;
 
@@ -86,15 +86,21 @@ public class MessageActivity extends AppCompatActivity {
 
                 //채팅방이 없을 경우
                 if (chatRoomname == null) {
+
                     //Database에 chatModel 값 저장 ( 로그인 user, 상대방 )
-                    mDatabase.child("mychatroom").push().setValue(chatModel).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    DatabaseReference pushChatroom = mDatabase.child("chatroom").push();
+                    pushId = pushChatroom.getKey();
+                    Log.e("알림", "푸쉬값? : " + pushId);
+
+                    pushChatroom.setValue(chatModel).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
                             ChackChatRoom(); // 채팅방 확인 함수
                             Log.v("알림", "채팅 방 생성 성공");
-
                         }
                     });
+
+
                 }
                 //채팅방이 있을 경우
                 else {
@@ -107,7 +113,7 @@ public class MessageActivity extends AppCompatActivity {
                     //message 입력 창이 비어있지 않아야 전송
                     if (messageedit.length() != 0) {
                         //DataBase에 메시지 입력
-                        mDatabase.child("mychatroom").child(chatRoomname).child("comments").push().setValue(comment).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        mDatabase.child("chatroom").child(chatRoomname).child("comments").push().setValue(comment).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
                                 messageedit.setText("");
@@ -148,7 +154,7 @@ public class MessageActivity extends AppCompatActivity {
 
         void getMessage() {
             //채팅방의 comment 값 가져오기
-            mDatabase.child("mychatroom").child(chatRoomname).child("comments").addValueEventListener(new ValueEventListener() {
+            mDatabase.child("chatroom").child(chatRoomname).child("comments").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     //리스트 초기화
@@ -241,11 +247,12 @@ public class MessageActivity extends AppCompatActivity {
 
     //채팅방 확인 함수
     void ChackChatRoom() {
-        //DataBase에서 "mychatroom"항목의 users가 로그인한 유저의 Uid와 동일한 경우
-        mDatabase.child("mychatroom").orderByChild("users/" + user.getUid()).equalTo(true).addListenerForSingleValueEvent(new ValueEventListener() {
+        //DataBase에서 "chatroom"항목의 users가 로그인한 유저의 Uid와 동일한 경우
+        mDatabase.child("chatroom").orderByChild("users/" + user.getUid()).equalTo(true).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
                     ChatModel chatModel = snapshot.getValue(ChatModel.class); //chatModel에 그 값 불러온다
                     if (chatModel.users.containsKey(destinationUid)) { // 만약 불러온 user의 값이 상대방 Uid와 동일한 경우
                         chatRoomname = snapshot.getKey(); //채팅방 이름 가져오고
@@ -253,6 +260,7 @@ public class MessageActivity extends AppCompatActivity {
                         message_recyclerView.setLayoutManager(new LinearLayoutManager(MessageActivity.this));
                         message_recyclerView.setAdapter(new RecyclerViewAdapter());
                         Log.v("알림", "ChatRoomname : " + chatRoomname);
+
 
                     }
                 }
@@ -266,4 +274,6 @@ public class MessageActivity extends AppCompatActivity {
         });
 
     }
+
+
 }

@@ -1,6 +1,9 @@
 package com.example.os150.otp;
 
+import android.app.Activity;
 import android.app.ActivityOptions;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -45,6 +48,9 @@ public class MessagePageFragment extends Fragment {
 
     RecyclerView messagepage_recyclerView;
 
+    String pushId;
+    String chatRoomname;
+
     public MessagePageFragment() {
 
     }
@@ -68,7 +74,7 @@ public class MessagePageFragment extends Fragment {
 
     class MessagePageFragmentRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public MessagePageFragmentRecyclerViewAdapter() {
-            mDatabase.child("mychatroom").orderByChild("users/" + user.getUid()).equalTo(true).addListenerForSingleValueEvent(new ValueEventListener() {
+            mDatabase.child("chatroom").orderByChild("users/" + user.getUid()).equalTo(true).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     MessagePageModel.clear();
@@ -86,6 +92,9 @@ public class MessagePageFragment extends Fragment {
                     Log.v("알림", " 데이터베이스 로드 실패");
                 }
             });
+            chatRoomname = getActivity().getIntent().getStringExtra("ChatRoomName");
+            Log.e("알림", "가져온 채팅방 이름 : " + chatRoomname);
+
         }
         @NonNull
         @Override
@@ -105,49 +114,55 @@ public class MessagePageFragment extends Fragment {
                     destinationUser.add(destination);
                     Log.v("알림", "상대방 Uid : " + destination);
 
+
                 }
             }
-            //문자열 형태로 내림차순 정렬하여 TreeMap에 저장 TreeMap의 key값은 String이며 value는 ChatModel의 Comment에서 가져온다.
-            Map<String, ChatModel.Comment> commentMap = new TreeMap<>(Collections.<String>reverseOrder());
-            commentMap.putAll(MessagePageModel.get(position).comments); //TreeMap으로 comments복사
-            String lastmessage = commentMap.keySet().toArray()[0].toString(); //TreeMap 의 key의 배열값을 String값으로 변환하여 문자열 저장
+
+            try {
+                //문자열 형태로 내림차순 정렬하여 TreeMap에 저장 TreeMap의 key값은 String이며 value는 ChatModel의 Comment에서 가져온다.
+                Map<String, ChatModel.Comment> commentMap = new TreeMap<>(Collections.<String>reverseOrder());
+                commentMap.putAll(MessagePageModel.get(position).comments); //TreeMap으로 comments복사
+                String lastmessage = commentMap.keySet().toArray()[0].toString(); //TreeMap 의 key의 배열값을 String값으로 변환하여 문자열 저장
 
 
-            //Database에서 chatuserInfo항목의 상대방 uid NickName 정보 불러오기
-            mDatabase.child("chatuserInfo").child(destination).child("nickname").addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    ((CustomViewHolder) holder).chatroomnickname.setText(dataSnapshot.getValue(String.class)); //VIewHolder의 nickname 에 문자열 지정
-                }
+                //Database에서 chatuserInfo항목의 상대방 uid NickName 정보 불러오기
+                mDatabase.child("chatuserInfo").child(destination).child("nickname").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        ((CustomViewHolder) holder).chatroomnickname.setText(dataSnapshot.getValue(String.class)); //VIewHolder의 nickname 에 문자열 지정
+                    }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    Log.v("알림", "데이터 불러오기 실패");
-
-                }
-            });
-            //Database에서 chatuserInfo 항목의 상대방 UId Profileimage 정보 불러오기
-            mDatabase.child("chatuserInfo").child(destination).child("profileimage").addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-
-                    String userprofile = dataSnapshot.getValue(String.class);
-                    if (userprofile.charAt(0) != 'a') {
-                        Glide.with(holder.itemView.getContext()).load(dataSnapshot.getValue(String.class)).into(((CustomViewHolder) holder).chatroomuserProfile);
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.v("알림", "데이터 불러오기 실패");
 
                     }
-                }
+                });
+                //Database에서 chatuserInfo 항목의 상대방 UId Profileimage 정보 불러오기
+                mDatabase.child("chatuserInfo").child(destination).child("profileimage").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    Log.v("알림", " 데이터 불러오기 실패");
-                }
-            });
+                        String userprofile = dataSnapshot.getValue(String.class);
+                        if (userprofile.charAt(0) != 'a') {
+                            Glide.with(holder.itemView.getContext()).load(dataSnapshot.getValue(String.class)).into(((CustomViewHolder) holder).chatroomuserProfile);
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.v("알림", " 데이터 불러오기 실패");
+                    }
+                });
+
 
             ((CustomViewHolder) holder).chatroomlastmessage.setText(MessagePageModel.get(position).comments.get(lastmessage).message);
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View view) {
+
+
                     // Activity간 데이터 전달 ( MessagePageActivity -> MessageActivity 로 상대방 Uid정보 전송 )
                     Intent intent = new Intent(view.getContext(), MessageActivity.class);
                     intent.putExtra("destinationUid", destinationUser.get(position));//상대방 uid
@@ -161,7 +176,9 @@ public class MessagePageFragment extends Fragment {
 
                 }
             });
-
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
 

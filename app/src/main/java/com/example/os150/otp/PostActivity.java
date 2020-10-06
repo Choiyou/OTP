@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
@@ -38,8 +39,9 @@ public class PostActivity extends ActivityGroup {
     ImageView BI_2;
     ImageView BI_3;
     ImageView BI_4;
-    String Useruid;
-    String Title;
+    String Useruid = null;
+    String Title = null;
+    String Price = null;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,8 +59,12 @@ public class PostActivity extends ActivityGroup {
         BI_3 = findViewById(R.id.BI_3);
         BI_4 = findViewById(R.id.BI_4);
 
+
         Useruid = getIntent().getStringExtra("Useruid");
         Title = getIntent().getStringExtra("Title");
+        Price = getIntent().getStringExtra("Price");
+
+        Log.v("알림", "가져온 Data = " + Useruid + "," + Title);
         //글제목을 DataBase의 게시글 제목과 비교해 같을 경우
         mDatabase.child("Bulletin").child("AllBulletin").orderByChild("Title").equalTo(Title).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -136,10 +142,19 @@ public class PostActivity extends ActivityGroup {
                 Intent chatintent = new Intent(PostActivity.this, MessageActivity.class);
                 chatintent.putExtra("destinationUid", Useruid);
                 Log.v("알림", "채팅 방 Uid : " + Useruid);
+                if (Useruid.equals(user.getUid())) {
+                    Toast.makeText(getApplicationContext(), "본인이 게시한 글입니다.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 startActivity(chatintent);
             }
         });
 
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
     }
 }

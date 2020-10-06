@@ -88,8 +88,10 @@ public class MyFriendFragment extends Fragment {
                     MyFriendModels.clear();
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         MyFriendModels.add(snapshot.getValue(UserModel.class));
+
                     }
                     notifyDataSetChanged(); // ListVIew 항목 갱신
+
 
                 }
 
@@ -116,7 +118,6 @@ public class MyFriendFragment extends Fragment {
         public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int position) {
             String uriprofile = MyFriendModels.get(position).profileimage;
             final Uri uriprofiles = Uri.parse(uriprofile);
-
 
             if (uriprofile.charAt(0) != 'a') {
                 Glide.with(holder.itemView.getContext()).load(uriprofiles).into(((CustomViewHolder) holder).chatuserProfile);

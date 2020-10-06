@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.media.Image;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -14,27 +15,27 @@ import android.widget.Toast;
  */
 
 public class CategoryActivity extends Activity {
-    ImageView kids, man, pet, buy, recycling, book, free, game, sports, furniture, digital, woman, womanthings, beauty, processedfood;
+    Button kids, man, pet, buy, recycling, book, free, game, sports, furniture, digital, woman, womanthings, beauty, processedfood;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
-        kids = (ImageView) findViewById(R.id.kids);
-        man = (ImageView) findViewById(R.id.man);
-        pet = (ImageView) findViewById(R.id.pet);
-        buy = (ImageView) findViewById(R.id.buy);
-        recycling = (ImageView) findViewById(R.id.recycling);
-        book = (ImageView) findViewById(R.id.book);
-        free = (ImageView) findViewById(R.id.free);
-        game = (ImageView) findViewById(R.id.game);
-        sports = (ImageView) findViewById(R.id.sports);
-        furniture = (ImageView) findViewById(R.id.furniture);
-        digital = (ImageView) findViewById(R.id.digital);
-        woman = (ImageView) findViewById(R.id.woman);
-        womanthings = (ImageView) findViewById(R.id.womanthing);
-        beauty = (ImageView) findViewById(R.id.beauty);
-        processedfood = (ImageView) findViewById(R.id.processedfood);
+        kids = (Button) findViewById(R.id.kids);
+        man = (Button) findViewById(R.id.man);
+        pet = (Button) findViewById(R.id.pet);
+        buy = (Button) findViewById(R.id.buy);
+        recycling = (Button) findViewById(R.id.recycling);
+        book = (Button) findViewById(R.id.book);
+        free = (Button) findViewById(R.id.free);
+        game = (Button) findViewById(R.id.game);
+        sports = (Button) findViewById(R.id.sports);
+        furniture = (Button) findViewById(R.id.furniture);
+        digital = (Button) findViewById(R.id.digital);
+        woman = (Button) findViewById(R.id.woman);
+        womanthings = (Button) findViewById(R.id.womanthing);
+        beauty = (Button) findViewById(R.id.beauty);
+        processedfood = (Button) findViewById(R.id.processedfood);
 
         kids.setOnClickListener(new View.OnClickListener() {
             @Override
