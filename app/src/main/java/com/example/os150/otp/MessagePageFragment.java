@@ -1,9 +1,6 @@
 package com.example.os150.otp;
 
-import android.app.Activity;
 import android.app.ActivityOptions;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -26,6 +23,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -36,9 +34,18 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by os150 on 2020-07-06.
+ * MessagePageFragment 자바 파일
+ * 기능 : RecyclerView message_recyclerView 연결,MessagePageFragmentRecyclerViewAdapter를 RecyclerView에 지정
+ *      : MessagePageFragment 목록 Adapter 생성
+ *      : item_chatroom와 연결된 ViewHolder 생성
+ *      : itemView 클릭 시 putExtra 통해 destination Uid 데이터 MessageActivity 로 전송 및 Activity 화면 전환
+ *
  */
 
 public class MessagePageFragment extends Fragment {
+
+    //ChatModel 타입의 리스트
+    //String 타입의 리스트
     List<ChatModel> MessagePageModel = new ArrayList<>();
     List<String> destinationUser = new ArrayList<>();
 
@@ -48,7 +55,6 @@ public class MessagePageFragment extends Fragment {
 
     RecyclerView messagepage_recyclerView;
 
-    String pushId;
     String chatRoomname;
 
     public MessagePageFragment() {
@@ -72,12 +78,14 @@ public class MessagePageFragment extends Fragment {
         return view;
     }
 
+    //MessagePageFragment 목록 Adapter 생성
     class MessagePageFragmentRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public MessagePageFragmentRecyclerViewAdapter() {
+            //FireBase RealTimeDataBase [chatroom]의 users의 로그인유저 Uid가 True일 경우
             mDatabase.child("chatroom").orderByChild("users/" + user.getUid()).equalTo(true).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    MessagePageModel.clear();
+                    MessagePageModel.clear(); //MessagePageModel 초기화
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
                         MessagePageModel.add(snapshot.getValue(ChatModel.class));
@@ -89,13 +97,15 @@ public class MessagePageFragment extends Fragment {
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-                    Log.v("알림", " 데이터베이스 로드 실패");
+                    Log.e("에러", " 데이터베이스에서 데이터 불러오기 실패");
                 }
             });
             chatRoomname = getActivity().getIntent().getStringExtra("ChatRoomName");
             Log.e("알림", "가져온 채팅방 이름 : " + chatRoomname);
 
         }
+
+        //리스트 항목 표시하기 위한 뷰 생성 & 해당 뷰 관리할 VIewHolder 생성 후 리턴
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -103,7 +113,7 @@ public class MessagePageFragment extends Fragment {
             return new CustomViewHolder(view);
         }
 
-        //실제 Data와 ViewHolder 연결
+        //ViewHolder 객체에 Position 기반의 데이터 표시
         @Override
         public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int position) {
             //상대방 Uid값 초기화
@@ -125,7 +135,7 @@ public class MessagePageFragment extends Fragment {
                 String lastmessage = commentMap.keySet().toArray()[0].toString(); //TreeMap 의 key의 배열값을 String값으로 변환하여 문자열 저장
 
 
-                //Database에서 chatuserInfo항목의 상대방 uid NickName 정보 불러오기
+                //FireBase RealTimeDataBase 의 [chatuserInfo]-[destination]-[nickname] 값 불러오기
                 mDatabase.child("chatuserInfo").child(destination).child("nickname").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -134,11 +144,11 @@ public class MessagePageFragment extends Fragment {
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-                        Log.v("알림", "데이터 불러오기 실패");
+                        Log.e("에러", "데이터베이스에서 데이터 불러오기 실패");
 
                     }
                 });
-                //Database에서 chatuserInfo 항목의 상대방 UId Profileimage 정보 불러오기
+                //FireBase RealTimeDataBase [chatuserInfo]-[destination]-[profileimage]값 불러오기
                 mDatabase.child("chatuserInfo").child(destination).child("profileimage").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -152,30 +162,29 @@ public class MessagePageFragment extends Fragment {
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-                        Log.v("알림", " 데이터 불러오기 실패");
+                        Log.e("에러", "데이터베이스 데이터 불러오기 실패");
                     }
                 });
 
 
-            ((CustomViewHolder) holder).chatroomlastmessage.setText(MessagePageModel.get(position).comments.get(lastmessage).message);
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View view) {
+                ((CustomViewHolder) holder).chatroomlastmessage.setText(MessagePageModel.get(position).comments.get(lastmessage).message);
+                //목록 ItemView 클릭 시 MessageActivity 화면 전환
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(final View view) {
 
+                        Intent intent = new Intent(view.getContext(), MessageActivity.class);
+                        intent.putExtra("destinationUid", destinationUser.get(position));//상대방 uid
+                        ActivityOptions activityOptions = null;
 
-                    // Activity간 데이터 전달 ( MessagePageActivity -> MessageActivity 로 상대방 Uid정보 전송 )
-                    Intent intent = new Intent(view.getContext(), MessageActivity.class);
-                    intent.putExtra("destinationUid", destinationUser.get(position));//상대방 uid
-                    ActivityOptions activityOptions = null;
+                        //기기의 안드로이드 버전이 Jelly_Bean 이상이어야 함
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                            activityOptions = ActivityOptions.makeCustomAnimation(view.getContext(), R.anim.toright, R.anim.toleft);
+                            startActivity(intent, activityOptions.toBundle());
+                        }
 
-                    //기기의 안드로이드 버전이 Jelly_Bean 이상이어야 함
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                        activityOptions = ActivityOptions.makeCustomAnimation(view.getContext(), R.anim.toright, R.anim.toleft);
-                        startActivity(intent, activityOptions.toBundle());
                     }
-
-                }
-            });
+                });
             } catch (Exception e) {
                 e.printStackTrace();
             }

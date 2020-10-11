@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?><!--동네 설정 레이아웃 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="10">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/searchTown"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/kyobohandwriting"
+            android:hint="주소를 입력해주세요"
+            android:singleLine="true" />
+
+        <Button
+            android:id="@+id/town_search_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/kyobohandwriting"
+            android:text="검색" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/lanText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="위도 : "
+            android:fontFamily="@font/kyobohandwriting" />
+
+        <TextView
+            android:id="@+id/lonText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="경도 : "
+            android:fontFamily="@font/kyobohandwriting" />
+    </LinearLayout>
+
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+
+        android:id="@+id/townmap"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".TownSettingActivity" />
+</LinearLayout>

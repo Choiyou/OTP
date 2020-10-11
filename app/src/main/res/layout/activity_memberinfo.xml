@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?><!--개인정보 레이아웃-->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -12,11 +12,13 @@
         android:gravity="center"
         android:padding="30dp"
         android:orientation="horizontal">
+
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/pimage"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:src ="@drawable/drawable_userimage"/>
+
         <TextView
             android:id="@+id/nicknametv"
             android:layout_width="wrap_content"
@@ -25,6 +27,7 @@
             android:text="별명"
             android:textSize="50dp"
             android:fontFamily="@font/kyobohandwriting" />
+
     </LinearLayout>
 
     <TextView
@@ -35,11 +38,13 @@
         android:text="내 게시글"
         android:textSize="40dp"
         android:fontFamily="@font/kyobohandwriting" />
+
     <View
         android:layout_width="300dp"
         android:layout_height="2dp"
         android:background="#848383"
         />
+
     <TextView
         android:id="@+id/recommendation"
         android:layout_width="wrap_content"
@@ -48,10 +53,12 @@
         android:text="추천 게시글"
         android:textSize="40dp"
         android:fontFamily="@font/kyobohandwriting" />
+
     <View
         android:layout_width="300dp"
         android:layout_height="2dp"
         android:background="#848383"/>
+
     <TextView
         android:id="@+id/localset"
         android:layout_width="wrap_content"

@@ -2,18 +2,9 @@ package com.example.os150.otp;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.ContentResolver;
-import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.DocumentsContract;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -23,7 +14,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -34,6 +24,12 @@ import com.google.firebase.database.FirebaseDatabase;
 
 /**
  * Created by os150 on 2020-05-19.
+ * SignupActivity 자바 파일
+ * 기능 : backbtn 클릭 시 MainActivity로 화면 전환
+ *      : ssignupbtn 클릭 시 editText를 통해 입력받은 모든 Data String 형태로 저장
+ *      : 모든 editText 입력 유무 check
+ *      : 비밀번호, 비밀번호 확인, 이메일 -> 유효성 검사
+ *      : createUserWithEmailAndPassword 통해 FireBase Auth 회원가입
  */
 
 public class SignupActivity extends Activity {
@@ -77,6 +73,7 @@ public class SignupActivity extends Activity {
             }
         });
 
+        //회원가입 버튼 클릭 시
         ssignupbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -133,20 +130,21 @@ public class SignupActivity extends Activity {
 
                         if (task.isSuccessful()) {
                             Uri image = Uri.parse("android.resource://com.example.os150.opt/drawable/" + getResources().getResourceEntryName(R.drawable.drawable_userimage));
+
                             DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-                            //회원가입 유저 정보 Database 저장
+                            //FireBase RealTimeDataBase [userInfo]-[user의 getUid()]에 userInfo 값 설정
                             UserInfo userInfo = new UserInfo(sname, snickname, sphonenum, semail, image.toString());
                             mDatabase.child("userInfo").child(mAuth.getCurrentUser().getUid()).setValue(userInfo);
                             Log.v("알림", "프로필 이미지 경로 : " + image.toString() + "\n회원가입 성공");
 
-                            //Chat가능 User DataBase저장
+                            //userModel에 값 입력
                             UserModel userModel = new UserModel();
                             userModel.nickname = snickname;
                             userModel.uid = mAuth.getCurrentUser().getUid();
                             userModel.profileimage = image.toString();
 
+                            //FireBase RealTimeDataBase [chatuserInfo]-[user의 getUid()]에 userModel값 설정
                             mDatabase.child("chatuserInfo").child(mAuth.getCurrentUser().getUid()).setValue(userModel);
-
                             startActivity(new Intent(getApplicationContext(), SecondMainActivity.class));
                             finish();
                         } else {
@@ -162,6 +160,7 @@ public class SignupActivity extends Activity {
         });
     }
 
+    //BackButton 클릭시 동작 X
     @Override
     public void onBackPressed() {
 

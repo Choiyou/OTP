@@ -49,6 +49,7 @@
         <activity android:name=".SelectCategoryActivity" />
         <activity android:name=".MyPostActivity" />
 
+        <activity android:name=".TownSettingActivity" />
         <activity android:name=".IntroActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,8 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?><!--MyPost레이아웃
+    MemberInfo Activity 에서 내 게시글 및 추천 게시글 선택 시 해당 게시글들이
+    들어갈 RecyclerView -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/mypost_recycleview"

@@ -14,7 +14,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -22,19 +21,26 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
-
-import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * Created by os150 on 2020-05-19.
+ * MainActivity Java 파일
+ * 기능 : TedPermission 을 통한 권한 설정 확인
+ * : ID / PW EditText 입력 Text Firebase의 User Data와 비교하여 회원정보 확인
+ * : 회원가입 버튼 클릭 시 Signup Activity로 전환
+ * : 비밀번호 재설정 버튼 클릭 시 ProgressDialog통해 이메일 입력 받아 해당 이메일로 비밀번호 변경 메일 전송
+ */
 public class MainActivity extends AppCompatActivity {
     Button msigninbtn;
     Button msignupbtn;
     Button mresetpwbtn;
     EditText midedit;
     EditText mpwedit;
+
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseUser user = mAuth.getCurrentUser();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,25 +53,29 @@ public class MainActivity extends AppCompatActivity {
         midedit = (EditText) findViewById(R.id.inputid);
         mpwedit = (EditText) findViewById(R.id.inputpw);
 
+        // Permission 리스너 생성
         PermissionListener permissionListener = new PermissionListener() {
             @Override
             public void onPermissionGranted() {
-                Toast.makeText(getApplicationContext(), "권한 설정 허용", Toast.LENGTH_SHORT).show();
-
+                //권한이 모두 허용 되었을 때
+                Log.v("알림", "권한 설정 성공");
             }
 
             @Override
             public void onPermissionDenied(List<String> deniedPermissions) {
-                Toast.makeText(getApplicationContext(), "권한 설정 실패", Toast.LENGTH_SHORT).show();
-
+                //요청 권한 중 거부 당한 권한 목록 리턴
+                Log.e("에러", "권한 설정 실패");
             }
 
         };
+        // 권한 Check
         TedPermission.with(getApplicationContext()).setPermissionListener(permissionListener).setDeniedMessage("권한설정을 허용하지 않을 경우 서비스를 제대로 이용하실 수 없습니다.").setPermissions(android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 android.Manifest.permission.READ_EXTERNAL_STORAGE,
                 android.Manifest.permission.CAMERA,
                 android.Manifest.permission.ACCESS_COARSE_LOCATION).check();
 
+
+        //ProgressDialog 생성
         final ProgressDialog pd = new ProgressDialog(this);
 
 
@@ -73,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
         if (user != null) {
             finish();
             startActivity(new Intent(getApplicationContext(), SecondMainActivity.class));
-            //두번째메인페이지를 시작하고 이 액티비티는 종료
+            //SecondMainActivity로 전환, 현재 Activity 종료
         }
 
 
@@ -96,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
                 pd.setMessage("로그인중입니다. \n 잠시만 기다려주세요 :D  .... ");
                 pd.show();
 
+                //로그인 확인
                 mAuth.signInWithEmailAndPassword(id, pw).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -166,14 +177,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //ActionBar 숨기기
         ActionBar ab = getSupportActionBar();
         ab.hide();
 
     }
 
+    // 뒤로가기 실행 시 Activity 종료
     @Override
     public void onBackPressed() {
-
         finish();
     }
 }

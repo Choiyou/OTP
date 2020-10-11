@@ -1,6 +1,5 @@
 package com.example.os150.otp;
 
-import android.net.Uri;
 
 /**
  * Created by os150 on 2020-07-23.

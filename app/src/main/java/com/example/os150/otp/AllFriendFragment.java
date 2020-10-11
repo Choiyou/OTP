@@ -22,7 +22,6 @@ import android.widget.EditText;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -37,6 +36,13 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by os150 on 2020-07-06.
+ * AllFriendFragment 자바 파일
+ * 기능 : AllFriend Fragment RecyclerViewAdapter RecyclerView 에 지정
+ *      : AllFriend Fragment 목록 Adapter생성
+ *      : item_chatuser와 연결된 ViewHolder 생성
+ *      : itemView 클릭 시 팝업 메뉴 생성
+ *        팝업 메뉴 = 친구 추가 / 신고하기 / 채팅하기
+ *        각 메뉴 클릭시 기능에 맞게 수행
  */
 
 public class AllFriendFragment extends Fragment {
@@ -57,8 +63,8 @@ public class AllFriendFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
-    //RecyclerView allfirend_recyclerView 연결,AllFriendFragmentRecyclerViewAdapter를 RecyclerView에 지정
 
+    //RecyclerView allfirend_recyclerView 연결, AllFriendFragmentRecyclerViewAdapter를 RecyclerView에 지정
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -69,27 +75,33 @@ public class AllFriendFragment extends Fragment {
         return view;
     }
 
+    //AllFriend Fragment 목록 Adapter 생성
+
     class AllFriendFragmentRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         public AllFriendFragmentRecyclerViewAdapter() {
 
-            //Database에 "chatuserInfo" 항목의  nickname 불러와 AllFriendModels 에 추가
+
+            //FireBase RealTimeDataBase의 [chatuserInfo]의 nickname값 불러오기
             mDatabase.child("chatuserInfo").orderByChild("nickname").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    AllFriendModels.clear();
+                    AllFriendModels.clear();//AllFriendModel리스트 초기화
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         AllFriendModels.add(snapshot.getValue(UserModel.class));
                     }
-                    notifyDataSetChanged(); // ListVIew 항목 갱신
+                    notifyDataSetChanged(); // ListVIew 항목 새로 고침
                 }
+
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
+                    Log.e("에러", "데이터베이스에서 데이터 불러오기 실패");
                 }
             });
 
         }
 
+        //리스트 항목 표시하기 위한 뷰 생성 & 해당 뷰 관리할 VIewHolder 생성 후 리턴
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -97,7 +109,7 @@ public class AllFriendFragment extends Fragment {
             return new CustomViewHolder(view);
         }
 
-        // 실제 Data ViewHolder에 연결 작업
+        //ViewHolder 객체에 Position 기반의 데이터 표시
         @Override
         public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int position) {
             String uprofile = AllFriendModels.get(position).profileimage;
@@ -123,7 +135,7 @@ public class AllFriendFragment extends Fragment {
             }
 
 
-            //ItemView 클릭 시
+            //목록 ItemView 클릭 시 PopupMenu 생성
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View view) {
@@ -141,7 +153,7 @@ public class AllFriendFragment extends Fragment {
                             switch (menuItem.getItemId()) {
                                 // Popup 메뉴에서 친구추가 클릭 시
                                 case R.id.insert:
-                                    //Database의 "myfriendlist"의 로그인한 userUid에 클릭한 uid 값 추가
+                                    //FireBase RealTimeDataBase 의 [myfriendlist]-[user.getUid]-[상대방 Uid]값 추가
                                     mDatabase.child("myfriendlist").child(user.getUid()).child(AllFriendModels.get(position).uid).setValue(userModel);
                                     break;
 
@@ -160,7 +172,8 @@ public class AllFriendFragment extends Fragment {
                                             if (notifymessage.getText().length() == 0) {
                                                 return;
                                             } else {
-                                                //Database의 관리자-신고- 메시지에 로그인한 user와 클릭한 user(item)의 nickname을 작성
+
+                                                //FireBase RealTimeDataBase의 [admin]-[notify]-[message]-[user.getUid]-[상대방 nickname]에 editText에서 입력받은 값 설정
                                                 mDatabase.child("admin").child("notify").child("message").child(user.getUid()).child(AllFriendModels.get(position).nickname).setValue(notifymessage.getText().toString());
 
                                             }
@@ -174,10 +187,9 @@ public class AllFriendFragment extends Fragment {
                                     });
                                     notifyalert.show();
                                     break;
+
                                 //Popup 메뉴에서 대화하기 클릭 시
                                 case R.id.message:
-
-                                    //Activity간 데이터 전송 ( AllFriendFragment -> MessageActivity 상대방 Uid 전송 )
                                     Intent allfriendintent = new Intent(view.getContext(), MessageActivity.class);
                                     allfriendintent.putExtra("destinationUid", AllFriendModels.get(position).uid);//상대방 uid
                                     ActivityOptions activityOptions = null;
@@ -220,53 +232,4 @@ public class AllFriendFragment extends Fragment {
         }
     }
 
-
-//    public String getRealPathFromUri(Uri contentUri) {
-//        if (contentUri.getPath().startsWith("/storage")) {
-//            return contentUri.getPath();
-//        }
-//        String id = DocumentsContract.getDocumentId(contentUri).split(":")[1];
-//        String[] columns = {MediaStore.Files.FileColumns.DATA};
-//        String selection = MediaStore.Files.FileColumns._ID + "=" + id;
-//        Cursor cursor = getContext().getContentResolver().query(MediaStore.Files.getContentUri("external"), columns, selection, null, null);
-//        try {
-//            int columnindex = cursor.getColumnIndex(columns[0]);
-//            if (cursor.moveToFirst()) {
-//                return cursor.getString(columnindex);
-//            }
-//        } finally {
-//            cursor.close();
-//        }
-//        return null;
-//    }
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -24,16 +23,20 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by os150 on 2020-08-24.
+ * MyPost Activity 자바 파일
+ * 기능 : 목록 Adapter에 Intent Key값을 가져와 Key 값에 따른 처리
+ *      : ItemView 클릭 시 항목의 Useruid 값과 Title값을 putExtra 이용해 PostActivity로 데이터 전송 및 Activity 전환
+ *
  */
 
 public class MyPostActivity extends AppCompatActivity {
 
+    //Bulletin 타입의 리스트 생성
     List<Bulletin> MyPostModel = new ArrayList<>();
 
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -54,53 +57,53 @@ public class MyPostActivity extends AppCompatActivity {
         mypost_recyclerView.setLayoutManager(mLayoutManager);
         mypost_recyclerView.setAdapter(new MyPostActivityRecyclerViewAdapter());
 
+        //ActionBar 숨기기
         ActionBar ab = getSupportActionBar();
         ab.hide();
 
 
     }
 
+    //목록 어뎁터 추가
     class MyPostActivityRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public MyPostActivityRecyclerViewAdapter() {
-            Intent intent = getIntent();
+            Intent intent = getIntent(); //Intent값 가져오기
             switch (intent.getStringExtra("key")) {
                 case "내 게시글":
-                    Toast.makeText(getApplicationContext(), "내 게시글", Toast.LENGTH_SHORT).show();
-
+                    Log.v("알림", "내 게시글 항목 클릭");
+                    //FireBase RealTimeDatabase의 [Bulletin]-[AllBulletin]의 Useruid값이 로그인한 유저 Uid값과 동일한 값 불러오기
                     mDatabase.child("Bulletin").child("AllBulletin").orderByChild("Useruid").equalTo(user.getUid()).addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-                            MyPostModel.clear();
+                            MyPostModel.clear();//리스트 초기화
                             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                 MyPostModel.add(snapshot.getValue(Bulletin.class));
                                 Log.v("알림", "성공");
                             }
-                            notifyDataSetChanged();
+                            notifyDataSetChanged();//리스트 새로 고침
                         }
 
                         @Override
                         public void onCancelled(DatabaseError databaseError) {
-                            Log.v("알림", "데이터 읽어오기 실패");
+                            Log.e("에러", " 데이터 베이스에서 데이터 불러오기 실패");
                         }
                     });
                     break;
                 case "추천 게시글":
+
+                    //FireBase RealTimeDatabase [UserLikeCategory]-[user.getUid]값 불러오기
                     mDatabase.child("UserLikeCategory").child(user.getUid()).addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             String categoryitems = "";
-                            MyPostModel.clear();
+                            MyPostModel.clear(); // 리스트 초기화
                             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                 categoryitems = categoryitems + snapshot.getValue(String.class) + "\n";
-                                Log.v("알림", "DataSnap : " + snapshot.getValue(String.class));
-
                             }
 
+                            Log.v("알림", "리스트 총 문장 ? " + categoryitems);
 
-                            Log.v("알림", "총 문장 ? " + categoryitems);
-
-
-                            String[] citems = categoryitems.split("\n");
+                            String[] citems = categoryitems.split("\n"); //Split로 citem '\n'기준 나누기
 
                             if (categoryitems.length() != 0) {
                                 if (citems.length == 0) {
@@ -109,7 +112,7 @@ public class MyPostActivity extends AppCompatActivity {
                                 for (int i = 0; i < citems.length; i++) {
                                     Log.v("알림", "최종 ㅣ " + citems[i]);
 
-
+                                    //FireBase의 RealTimeDatabase의 [Bulletin]-[citems[i]]의 Useruid값 불러오기
                                     mDatabase.child("Bulletin").child(citems[i]).orderByChild("Useruid").addValueEventListener(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -117,13 +120,12 @@ public class MyPostActivity extends AppCompatActivity {
                                                 MyPostModel.add(snapshot2.getValue(Bulletin.class));
                                                 Log.v("알림", "추천 게시글 모델 : " + MyPostModel);
                                             }
-
-                                            notifyDataSetChanged();
+                                            notifyDataSetChanged();//리스트 새로 고침
                                         }
 
                                         @Override
                                         public void onCancelled(DatabaseError databaseError) {
-
+                                            Log.e("에러", "데이터베이스 데이터 불러오기 실패");
                                         }
                                     });
                                 }
@@ -135,19 +137,21 @@ public class MyPostActivity extends AppCompatActivity {
 
                         @Override
                         public void onCancelled(DatabaseError databaseError) {
-
+                            Log.e("에러", "데이터베이스 데이터 불러오기 실패");
                         }
                     });
 
                     break;
 
                 case "동네 설정":
-                    Toast.makeText(getApplicationContext(), "동네 설정", Toast.LENGTH_SHORT).show();
+                    finish();
+                    startActivity(new Intent(getApplicationContext(), TownSettingActivity.class));
                     break;
 
             }
         }
 
+        //새로운 ViewHolder 생성 + item_post 레이아웃으로 디자인
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -155,12 +159,14 @@ public class MyPostActivity extends AppCompatActivity {
             return new CustomViewHolder(view);
         }
 
+        //실제 Data 와 ViewHolder 연결
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
             ((CustomViewHolder) holder).PostPrice.setText(MyPostModel.get(position).Price);
             ((CustomViewHolder) holder).PostTitle.setText(MyPostModel.get(position).Title);
             Log.v("알림", "글 제목 : " + MyPostModel.get(position).Title);
 
+            //ItemView 클릭 시
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -175,6 +181,7 @@ public class MyPostActivity extends AppCompatActivity {
             }
         }
 
+        //RecyclerView 안에 들어갈 ViewHolder 의 갯수는 MyPostModel의 크기와 같다
         @Override
         public int getItemCount() {
             return MyPostModel.size();

@@ -23,7 +23,6 @@ import android.widget.EditText;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -43,10 +42,18 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by os150 on 2020-07-06.
+ * MyFriendFragment 자바 파일
+ * 기능 : RecyclerView myFriend_recyclerView 연결,MyFriendFragmentRecyclerViewAdapter를 RecyclerView에 지정
+ *      : MyFriendFragment 목록 어뎁터 생성
+ *      : item_chatuser와 연결된 ViewHolder 생성
+ *      : itemView 클릭 시 팝업 메뉴 생성
+ *        팝업 메뉴 = 친구 삭제 / 신고하기 / 채팅하기
+ *        각 기능에 맞게 수행
  */
 
 public class MyFriendFragment extends Fragment {
 
+    //UserModel 타입의 리스트
     List<UserModel> MyFriendModels = new ArrayList<>();
 
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -78,33 +85,34 @@ public class MyFriendFragment extends Fragment {
         return view;
     }
 
+    //MyFriend Fragment 목록 생성
     class MyFriendFragmentRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         public MyFriendFragmentRecyclerViewAdapter() {
-            //Database에 "myfriendlist" 항목의 로그인한 user nickname 불러와 myFriendUserModels 에 추가
+            //FireBase RealTimeDataBase [myfriendlist]-[user.getUid]의 nickname 값 불러와
             mDatabase.child("myfriendlist").child(user.getUid()).orderByChild("nickname").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    MyFriendModels.clear();
+                    MyFriendModels.clear(); //리스트 초기화
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         MyFriendModels.add(snapshot.getValue(UserModel.class));
 
                     }
-                    notifyDataSetChanged(); // ListVIew 항목 갱신
+                    notifyDataSetChanged(); // ListVIew 항목 새로 고침
 
 
                 }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-                    Log.v("알림", "데이터 불러오기 실패");
+                    Log.e("에러", "데이터 베이스에서 데이터 불러오기 실패");
                 }
             });
 
 
         }
 
-        //item_chatuser과 연결
+        //리스트 항목 표시하기 위한 뷰 생성 & 해당 뷰 관리할 VIewHolder 생성 후 리턴
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -112,8 +120,7 @@ public class MyFriendFragment extends Fragment {
             return new CustomViewHolder(view);
         }
 
-
-        // 실제 Data ViewHolder에 연결 작업
+        //ViewHolder 객체에 Position 기반의 데이터 표시
         @Override
         public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int position) {
             String uriprofile = MyFriendModels.get(position).profileimage;
@@ -126,7 +133,7 @@ public class MyFriendFragment extends Fragment {
                 Glide.with(holder.itemView.getContext()).load(R.drawable.drawable_userimage).into(((CustomViewHolder) holder).chatuserProfile);
                 ((CustomViewHolder) holder).chatnickname.setText(MyFriendModels.get(position).nickname);
             }
-            //ItemView 클릭시
+            //목록 ItemView 클릭 시 Popup 생성
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View view) {
@@ -141,7 +148,7 @@ public class MyFriendFragment extends Fragment {
                                 //Popup 메뉴에서 친구 삭제 클릭 시
                                 case R.id.delete:
                                     Log.v("알림", "선택 유저: " + MyFriendModels.get(position).uid);
-                                    //Database의 "myfriendlist"- 로그인한 user Uid 의 클릭한 ItemView의 uid정보 제거
+                                    //FireBase의 RealTimeDataBase에서 [myfriendlist]-[user.getUid]-[상대방Uid]값 제거
                                     mDatabase.child("myfriendlist").child(user.getUid()).child(MyFriendModels.get(position).uid).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
@@ -151,7 +158,7 @@ public class MyFriendFragment extends Fragment {
                                     }).addOnFailureListener(new OnFailureListener() {
                                         @Override
                                         public void onFailure(@NonNull Exception e) {
-                                            Log.v("알림", "데이터 삭제 실패");
+                                            Log.e("에러", "데이터베이스에 데이터 삭제 실패");
                                         }
 
                                     });
@@ -172,6 +179,7 @@ public class MyFriendFragment extends Fragment {
                                             if (notifymessage.getText().length() == 0) {
                                                 return;
                                             } else {
+                                                //FireBase RealTimeDatabase [admin]-[notify]-[message]-[로그인한 userUid]-[상대방 Uid] 에 editText 통해 입력된 데이터 값 저장
                                                 mDatabase.child("admin").child("notify").child("message").child(user.getUid()).child(MyFriendModels.get(position).nickname).setValue(notifymessage.getText().toString());
 
                                             }
@@ -187,7 +195,6 @@ public class MyFriendFragment extends Fragment {
                                     break;
                                 //Popup 메뉴에서 대화하기 클릭 시
                                 case R.id.message:
-                                    //Activity간 Data 전송 ( MyFriendFragment -> MessageActivity 상대방 Uid 정보 전송 )
                                     Intent myfriendintent = new Intent(view.getContext(), MessageActivity.class);
                                     myfriendintent.putExtra("destinationUid", MyFriendModels.get(position).uid);//상대방 uid
                                     ActivityOptions activityOptions = null;
@@ -234,24 +241,5 @@ public class MyFriendFragment extends Fragment {
         FragmentTransaction transaction = getFragmentManager().beginTransaction(); //FragmentTrasaction 참조 객체 가져오기
         transaction.detach(this).attach(this).commit(); // FragmentTransaction Fragment가 존재할 경우 떼어 내고 다시 붙이는 작업
     }
-//
-//    public String getRealPathFromUri(Uri contentUri) {
-//        if (contentUri.getPath().startsWith("/storage")) {
-//            return contentUri.getPath();
-//        }
-//        String id = DocumentsContract.getDocumentId(contentUri).split(":")[1];
-//        String[] columns = {MediaStore.Files.FileColumns.DATA};
-//        String selection = MediaStore.Files.FileColumns._ID + "=" + id;
-//        Cursor cursor = getContext().getContentResolver().query(MediaStore.Files.getContentUri("external"), columns, selection, null, null);
-//        try {
-//            int columnindex = cursor.getColumnIndex(columns[0]);
-//            if (cursor.moveToFirst()) {
-//                return cursor.getString(columnindex);
-//            }
-//        } finally {
-//            cursor.close();
-//        }
-//        return null;
-//    }
 
 }

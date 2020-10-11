@@ -5,13 +5,14 @@ import android.app.ActivityGroup;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TabHost;
-import android.widget.Toast;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 /**
  * Created by os150 on 2020-05-19.
+ * SecondMainActivity 자바 파일
+ * 기능 : 로그인한 유저가 존재하지 않을 경우 IntroActivity로 화면 전환
+ *      : Layout 각 Tab별로 표시되는 Text 설정 및 연결 Activity 설정
  */
 @SuppressWarnings("deprecation")
 public class SecondMainActivity extends ActivityGroup {
@@ -22,6 +23,8 @@ public class SecondMainActivity extends ActivityGroup {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
+        //로그인한 user가 없다면 IntroActivity로 화면 전환
+
         if (user == null) {
             finish();
             startActivity(new Intent(getApplicationContext(), IntroActivity.class));
@@ -30,8 +33,9 @@ public class SecondMainActivity extends ActivityGroup {
 
         TabHost tabHost = (TabHost) findViewById(R.id.tabhost);
 
-        tabHost.setup(this.getLocalActivityManager());
+        tabHost.setup(this.getLocalActivityManager()); // TabWidget 정상 작동을 위한 작업
 
+        //각 Tab 별 표시 텍스트 설정 및 연결된 PageVIew
         TabHost.TabSpec tabSpecMain = tabHost.newTabSpec("MAIN").setIndicator("메인");
         tabSpecMain.setContent(new Intent(getApplicationContext(), ConnectActivity.class));
         tabHost.addTab(tabSpecMain);
@@ -61,6 +65,7 @@ public class SecondMainActivity extends ActivityGroup {
 
     }
 
+    //BackButton 클릭시 동작 x
     @Override
     public void onBackPressed() {
 

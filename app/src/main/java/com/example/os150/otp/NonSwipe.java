@@ -11,7 +11,10 @@ import java.lang.reflect.Field;
 
 /**
  * Created by os150 on 2020-07-16.
+ * NonSwipe 자바 파일
+ * 기능 : 좌우로 Page 이동을 막기 위한 클래스
  */
+
 
 public class NonSwipe extends ViewPager {
 
@@ -26,12 +29,13 @@ public class NonSwipe extends ViewPager {
     }
 
     //하위 View로 이벤트 전달
+    //Swipe로 인해 페이지 바뀌는 것 방지
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
         return false;
     }
 
-
+    //Swipe로 인해 페이지 바뀌는 것 방지
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         return false;

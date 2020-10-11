@@ -35,21 +35,31 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by os150 on 2020-07-16.
+ * MessageActivity 자바 파일
+ * 기능 : sendbtn 클릭 시 현재 로그인한 Uid 및 상대방 Uid  -> ChatModel.users 에 값 저장
+ *        채팅방이 없을 경우 -> 채팅방 생성
+ *        채팅방이 있을 경우 -> 로그인한 유저 Uid, messageedit Text값, timeStamp 서버상 시간 값 ChatModel.comment에 저장
+ *                              & RealTimeDataBase에 저장
+ *      : getMessage() 함수를 통해 [chatroom]-[chatRoomname]-[comments]값 가져와 목록 어뎁터에 추가
+ *
  */
 
 public class MessageActivity extends AppCompatActivity {
     Button sendbtn;
     EditText messageedit;
     RecyclerView message_recyclerView;
+
     String chatRoomname;
     String destinationUid;
     String pushId;
+
+    //날짜 형식 변환 포맷 형식
     SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd HH:mm");
+
     UserModel destinationuserModel;
 
 
@@ -75,9 +85,11 @@ public class MessageActivity extends AppCompatActivity {
         //채팅방 확인 함수
         ChackChatRoom();
 
+        //전송 버튼 클릭 시
         sendbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 final ChatModel chatModel = new ChatModel();
 
                 //ChatUser의 로그인 user와 상대방 Uid chatModel에 저장
@@ -87,11 +99,12 @@ public class MessageActivity extends AppCompatActivity {
                 //채팅방이 없을 경우
                 if (chatRoomname == null) {
 
-                    //Database에 chatModel 값 저장 ( 로그인 user, 상대방 )
+                    //Firebase RealTimeDatabase [chatroom]에  chatModel 값 저장 ( 로그인 user, 상대방 )
                     DatabaseReference pushChatroom = mDatabase.child("chatroom").push();
                     pushId = pushChatroom.getKey();
                     Log.e("알림", "푸쉬값? : " + pushId);
 
+                    //Firebase RealTimeDatabase의 [chatroom]-[pushid]에 ChatModel 값 설정
                     pushChatroom.setValue(chatModel).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
@@ -105,6 +118,7 @@ public class MessageActivity extends AppCompatActivity {
                 //채팅방이 있을 경우
                 else {
                     final ChatModel.Comment comment = new ChatModel.Comment();
+
                     //ChatModel의 Comment에 uid, message, timestamp 저장
                     comment.uid = user.getUid();
                     comment.message = messageedit.getText().toString();
@@ -112,16 +126,16 @@ public class MessageActivity extends AppCompatActivity {
 
                     //message 입력 창이 비어있지 않아야 전송
                     if (messageedit.length() != 0) {
-                        //DataBase에 메시지 입력
+                        //Firebase RealTimeDataBase의 [chatroom]-[Chatroomname]-[comments]에 comment값 저장
                         mDatabase.child("chatroom").child(chatRoomname).child("comments").push().setValue(comment).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                messageedit.setText("");
+                                messageedit.setText(""); //messageedit Text 초기화
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                Log.v("알림", "오류" + e);
+                                Log.e("에러", "오류 발생 : " + e);
                             }
                         });
                     }
@@ -129,31 +143,33 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
 
-
     }
 
 
+    //목록 어뎁터 추가
     class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+        //ChatModel.Comment 타입의 리스트 생성
         List<ChatModel.Comment> comments = new ArrayList<>();
 
         public RecyclerViewAdapter() {
-            //Database에서 "chatuserInfo"에서 상대방 Uid의 데이터 가져오기
+            //Firebase RealTimeDatabase의 [chatuserInfo]-[destinationUid] 데이터 값 불러오기
             mDatabase.child("chatuserInfo").child(destinationUid).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     destinationuserModel = dataSnapshot.getValue(UserModel.class);
-                    getMessage();
+                    getMessage(); //getMessage함수 호출
                 }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-                    Log.v("알림", "데이터 불러오기 실패");
+                    Log.e("에러", "데이터베이스에서 데이터 불러오기 실패");
                 }
             });
         }
 
+        //getMessage()함수
         void getMessage() {
-            //채팅방의 comment 값 가져오기
+            //FireBase RealTimeDataBase의 [chatroom]-[chatRoomname]-[comments]의 값 가져오기
             mDatabase.child("chatroom").child(chatRoomname).child("comments").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -168,12 +184,12 @@ public class MessageActivity extends AppCompatActivity {
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-                    Log.v("알림", "데이터 불러오기 실패");
+                    Log.e("에러", "데이터 베이스에서 데이터 불러오기 실패");
                 }
             });
         }
 
-        //item_message와 연결
+        //새로운 VIewHolder생성 + item_message 레이아웃으로 디자인
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -185,7 +201,6 @@ public class MessageActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             MessageViewHolder messageViewHolder = ((MessageViewHolder) holder);
-
             long unixTime = (long) comments.get(position).timestamp;
 
             Date date = new Date(unixTime);
@@ -205,6 +220,7 @@ public class MessageActivity extends AppCompatActivity {
                 messageViewHolder.linearlayout_destination.setVisibility(View.VISIBLE);
                 messageViewHolder.textView_message.setText(comments.get(position).message);
                 messageViewHolder.textView_message.setTextSize(16);
+
                 if (destinationuserModel.profileimage.charAt(0) != 'a') {
                     Glide.with(messageViewHolder.itemView.getContext()).load(destinationuserModel.profileimage).into(messageViewHolder.imageview_profile);
                 } else {
@@ -247,7 +263,7 @@ public class MessageActivity extends AppCompatActivity {
 
     //채팅방 확인 함수
     void ChackChatRoom() {
-        //DataBase에서 "chatroom"항목의 users가 로그인한 유저의 Uid와 동일한 경우
+        //FireBase RealTimeDataBase의 [chatroom]-[users/uesr.getUid]값이 True인 값 불러오기
         mDatabase.child("chatroom").orderByChild("users/" + user.getUid()).equalTo(true).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -256,7 +272,7 @@ public class MessageActivity extends AppCompatActivity {
                     ChatModel chatModel = snapshot.getValue(ChatModel.class); //chatModel에 그 값 불러온다
                     if (chatModel.users.containsKey(destinationUid)) { // 만약 불러온 user의 값이 상대방 Uid와 동일한 경우
                         chatRoomname = snapshot.getKey(); //채팅방 이름 가져오고
-                        sendbtn.setEnabled(true);
+                        sendbtn.setEnabled(true); //
                         message_recyclerView.setLayoutManager(new LinearLayoutManager(MessageActivity.this));
                         message_recyclerView.setAdapter(new RecyclerViewAdapter());
                         Log.v("알림", "ChatRoomname : " + chatRoomname);
@@ -268,8 +284,7 @@ public class MessageActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.v("알림", "데이터 불러오기 실패");
-
+                Log.e("에러", "데이터베이스에서 데이터 불러오기 실패");
             }
         });
 

@@ -1,9 +1,5 @@
 package com.example.os150.otp;
 
-import android.net.Uri;
-
-import org.w3c.dom.Comment;
-
 import java.util.HashMap;
 import java.util.Map;
 

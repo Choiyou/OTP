@@ -18,8 +18,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -36,7 +34,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -49,7 +46,18 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by os150 on 2020-05-21.
- */
+ * ProfileActivity 자바 파일
+ * 기능 : FireBase RealTimeDataBase 로그인한 유저 nickname 값 pnickname TextView 설정
+ *      : FireBase RealTimeDataBase [userInfo]-[user.getUid()]-[profileimage]값 불러와 이미지 값 pimageview 설정
+ *      : withdrawalbtn 클릭 시 AlertDialog 통해 FireBase user 정보 삭제 진행
+ *        ( 채팅 유저 정보, 개인 유저 정보, 친구 리스트, 채팅방, 내 개시글 등 ) 후 로그아웃 및 MainActivity 화면 전환
+ *      : logoutbtn 클릭 시 Logout 후 MainActivity 로 화면 전환
+ *      : changeprofile 버튼 클릭 시 AlertDialog 통해 카메라, 앨범 선택 기능 수행
+ *      : changenickname 버튼 클릭 시 AlertDialog 통해 새로운 nickname Text입력 받아 FirebaseRealTimeDataBase
+ *        chatuserInfo 및 userInfo nickname 변경
+ *      : changepw  버튼 클릭 시 AlertDialog 통해 새로운 비밀번호 입력 받아 user.updatePassword 통해 비밀번호 변경 후
+ *        로그아웃 및 MainActivity 로 전환
+ **/
 
 public class ProfileActivity extends ActivityGroup {
 
@@ -71,13 +79,16 @@ public class ProfileActivity extends ActivityGroup {
     FirebaseUser user = mAuth.getCurrentUser();
     FirebaseStorage storage = FirebaseStorage.getInstance();
 
+
     SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd", Locale.KOREA);
     Date date = new Date();
 
+    //ChatModel 타입의 리스트 생성
     List<ChatModel> chatroom = new ArrayList<>();
 
 
     private File imagefile;
+
     Uri albumuri;
     Uri cameraUri = null;
 
@@ -93,12 +104,13 @@ public class ProfileActivity extends ActivityGroup {
         changeprofile = (Button) findViewById(R.id.profilechange);
         changenickname = (Button) findViewById(R.id.nicknamechange);
         changepw = (Button) findViewById(R.id.pwchange);
+
         if (count == 1000) {
             count = 0;
         }
 
         try {
-            // 별명 불러오기
+            // FireBase RealTimeDataBase에서  [userInfo]-[user.getUid]-[nickname]값 불러와 pnickname에 값 설정
             mDatabase.child("userInfo").child(user.getUid()).child("nickname").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -107,25 +119,25 @@ public class ProfileActivity extends ActivityGroup {
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-                    Log.v("알림", "데이터 로드 실패");
+                    Log.e("에러", "데이터베이스에서 데이터 불러오기 실패");
                 }
             });
-            mDatabase.child("myfriendlist").orderByChild(user.getUid()).equalTo(user.getUid()).addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        String name = snapshot.getValue(String.class);
-                        Log.e("알림", "오류 : " + name);
-                    }
-                }
+//            //FireBase RealTimeDataBase에서 [myfriendlist] 항목의 user.getUid 값과 로그인한user.getUid 값을 비교하여 같을 경우 값 불러오기
+//            mDatabase.child("myfriendlist").orderByChild(user.getUid()).equalTo(user.getUid()).addValueEventListener(new ValueEventListener() {
+//                @Override
+//                public void onDataChange(DataSnapshot dataSnapshot) {
+//                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+//                        String name = snapshot.getValue(String.class);
+//                    }
+//                }
+//
+//                @Override
+//                public void onCancelled(DatabaseError databaseError) {
+//                    Log.e("에러","데이터베이스에서 데이터 불러오기 실패")
+//                }
+//            });
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-
-            //프로필 이미지 불러오기
+            //FireBase RealTimeDataBase에서 [userInfo]-[user.getUid]-[profileimage] 값 불러와 pimageview CircleImageView에 설정
             mDatabase.child("userInfo").child(user.getUid()).child("profileimage").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -145,14 +157,12 @@ public class ProfileActivity extends ActivityGroup {
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-
-                    Log.v("알림", "데이터 로드 실패");
+                    Log.e("에러", "데이터베이스에서 데이터 불러오기 실패");
                 }
             });
         } catch (Exception e1) {
             e1.printStackTrace();
         }
-
 
 
         //회원탈퇴 버튼 클릭 이벤트
@@ -169,7 +179,7 @@ public class ProfileActivity extends ActivityGroup {
                             public void onComplete(@NonNull Task<Void> task) {
                                 chatroom.clear();
                                 Log.v("알림", "회원 탈퇴 진행 완료");
-                                //회원 탈퇴 시 채팅방 UserInfo 삭제, 내 친구 삭제, 유저 관심 상품 삭제, 내 게시글 삭제
+                                //회원 탈퇴 시 채팅방 UserInfo 삭제, 내 친구 삭제, 유저 관심 상품 삭제, 내 게시글, 채팅방 삭제
                                 mDatabase.child("chatuserInfo").child(user.getUid()).removeValue();
                                 mDatabase.child("myfriendlist").child(user.getUid()).removeValue();
                                 mDatabase.child("myfriendlist").orderByChild(user.getUid()).equalTo(user.getUid()).addValueEventListener(new ValueEventListener() {
@@ -182,7 +192,7 @@ public class ProfileActivity extends ActivityGroup {
 
                                     @Override
                                     public void onCancelled(DatabaseError databaseError) {
-
+                                        Log.e("에러", "데이터베이스에서 데이터 불러오기 실패");
                                     }
                                 });
                                 mDatabase.child("chatroom").orderByChild("users/" + user.getUid()).equalTo(true).addValueEventListener(new ValueEventListener() {
@@ -195,7 +205,7 @@ public class ProfileActivity extends ActivityGroup {
 
                                     @Override
                                     public void onCancelled(DatabaseError databaseError) {
-
+                                        Log.e("에러", "데이터베이스에서 데이터 불러오기 실패");
                                     }
                                 });
                                 mDatabase.child("UserLikeCategory").child(user.getUid()).removeValue();
@@ -209,13 +219,13 @@ public class ProfileActivity extends ActivityGroup {
 
                                     @Override
                                     public void onCancelled(DatabaseError databaseError) {
-
+                                        Log.e("에러", "데이터베이스에서 데이터 불러오기 실패");
                                     }
                                 });
 
-
                                 mDatabase.child("userInfo").child(user.getUid()).removeValue();
                                 mAuth.signOut();
+
                                 Intent intent = new Intent(ProfileActivity.this, MainActivity.class);
                                 startActivity(intent);
                                 finish();
@@ -272,9 +282,9 @@ public class ProfileActivity extends ActivityGroup {
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                            //파일이 없으 ㄹ경우
+                            //파일이 없을경우
                             if (imagefile != null) {
-                                // imagefile을 열어 권한을 받아와 파일 공유
+                                // image file을 열어 권한을 받아와 파일 공유
                                 cameraUri = FileProvider.getUriForFile(getApplicationContext(), "com.example.os150.otp.fileprovider", imagefile);
                                 cameraintent.putExtra(MediaStore.EXTRA_OUTPUT, cameraUri);// cameraUri 로 Uri 지정 데이터 전달
                                 startActivityForResult(cameraintent, CAMERA_IMAGE_REQUEST);
@@ -294,6 +304,7 @@ public class ProfileActivity extends ActivityGroup {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         //AlertDialog 앨범 항목 클릭 시
                         Log.v("알림", "앨범 항목 클릭");
+
                         Intent albumintent = new Intent(Intent.ACTION_PICK);
                         albumintent.setType("image/*");
                         albumintent.setAction(Intent.ACTION_GET_CONTENT); // 이미지 경로값 넘기기
@@ -305,11 +316,12 @@ public class ProfileActivity extends ActivityGroup {
             }
         });
 
-        //별명 버튼 클릭 시 작동
+        //별명 변경 버튼 클릭 시 작동
         changenickname.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 final EditText nchange = new EditText(ProfileActivity.this);
+
                 nchange.getTransformationMethod();
                 nchange.setSingleLine(); //singleline처리
 
@@ -323,7 +335,7 @@ public class ProfileActivity extends ActivityGroup {
                         if (nchange.getText().length() == 0) {
                             dialogInterface.dismiss();
                         } else {
-                            //Database 추가
+                            //FireBase RealTimeDataBase chatuserInfo 의 유저 nickname 및 userInfo 의 유저 nickname 값 변경
                             mDatabase.child("chatuserInfo").child(user.getUid().toString()).child("nickname").setValue(nchange.getText().toString());
                             mDatabase.child("userInfo").child(user.getUid().toString()).child("nickname").setValue(nchange.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
@@ -390,7 +402,7 @@ public class ProfileActivity extends ActivityGroup {
         super.onActivityResult(requestCode, resultCode, data);
         final ProgressDialog progressDialog = new ProgressDialog(this);
 
-        //requestCode가 CAMERA_IMAGE_REQUEST값과 동일할 경우
+        //requestCode가 CAMERA_IMAGE_REQUEST값과 동일할 경우 ( 카메라 클릭 시 )
         if (requestCode == CAMERA_IMAGE_REQUEST) {
             if (resultCode == RESULT_OK) {
 
@@ -412,23 +424,25 @@ public class ProfileActivity extends ActivityGroup {
                             Uri downloadcameraUrl = taskSnapshot.getDownloadUrl(); // 저장된 이미지 다운로드
                             Glide.with(getApplicationContext()).load(downloadcameraUrl).into(pimageview);
                             Log.v("알림", "다운로드 경로 : " + downloadcameraUrl);
-                            //DataBase 정보 업데이트
+                            //FireBase RealTimeDataBase chatuserInfo & userInfo 의 profileimage 값 변경
                             mDatabase.child("chatuserInfo").child(user.getUid().toString()).child("profileimage").setValue(downloadcameraUrl.toString());
                             mDatabase.child("userInfo").child(user.getUid().toString()).child("profileimage").setValue(downloadcameraUrl.toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
+                                    Log.v("알림", "데이터베이스 변경 성공");
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
-                                    Toast.makeText(getApplicationContext(), "데이터베이스 변경 실패", Toast.LENGTH_SHORT).show();
+                                    Log.e("에러", "데이터베이스 변경 실패");
+
                                 }
                             });
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            Log.v("알림", "데이터베이스 변경 실패");
+                            Log.e("에러", "데이터베이스 변경 실패");
                         }
                     }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -441,7 +455,7 @@ public class ProfileActivity extends ActivityGroup {
             }
         }
 
-        // RequestCode 값과 ALBUM_IMAGE_REQUEST 값과 동일할 경우
+        // RequestCode 값과 ALBUM_IMAGE_REQUEST 값과 동일할 경우 ( 앨범 클릭 시 )
         if (requestCode == ALBUM_IMAGE_REQUEST) {
             if (resultCode == RESULT_OK) {
                 try {
@@ -458,30 +472,27 @@ public class ProfileActivity extends ActivityGroup {
                             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                 progressDialog.dismiss();
                                 Uri downloadalbumUri = taskSnapshot.getDownloadUrl(); // 이미지 다운로드
-                                //pimageview.setImageURI(downloadUri);
-
                                 Glide.with(getApplicationContext()).load(downloadalbumUri).into(pimageview); //CircleImageVIew에 띄우기
                                 Log.v("알림", "다운로드 이미지 : " + downloadalbumUri);
 
-                                //Database 업데이트
+                                //FireBase RealTimeDataBase chatuserInfo & userInfo 의 유저 정보 중 profileimage 값 변경
                                 mDatabase.child("chatuserInfo").child(user.getUid().toString()).child("profileimage").setValue(downloadalbumUri.toString());
                                 mDatabase.child("userInfo").child(user.getUid().toString()).child("profileimage").setValue(downloadalbumUri.toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
-
                                         Log.v("알림", "데이터베이스 변경 성공");
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
-                                        Log.v("알림", "데이터베이스 변경 실패");
+                                        Log.e("에러", "데이터베이스 변경 실패");
                                     }
                                 });
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                Log.v("알림", "데이터베이스 변경 실패");
+                                Log.e("에러", "데이터베이스 변경 실패");
                             }
                         }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                             @Override
@@ -503,14 +514,13 @@ public class ProfileActivity extends ActivityGroup {
     //카메라가 찍은 이미지 저장 파일
     private File CameraImage() throws IOException {
         //파일 이름
-        String imagefilename = "cameraImage_" + String.valueOf(System.currentTimeMillis()) + ".png";
+        String imagefilename = "cameraImage__" + String.valueOf(System.currentTimeMillis()) + ".png";
         //이미지가 저장될 폴더 명
         File StorageFile = new File(Environment.getExternalStorageDirectory(), "/DCIM/Camera/" + imagefilename);
-//        if(!StorageFile.exists())
-//            StorageFile.mkdirs();
         return StorageFile;
     }
 
+    //BackButton 클릭시 SecondMainActivity로 Activity 전환
     @Override
     public void onBackPressed() {
         startActivity(new Intent(getApplicationContext(), SecondMainActivity.class));

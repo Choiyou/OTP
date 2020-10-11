@@ -13,10 +13,8 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
@@ -28,21 +26,16 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -50,11 +43,19 @@ import java.util.Locale;
 
 /**
  * Created by os150 on 2020-05-19.
- */
+ * WriteActivity 자바 파일
+ * 기능 : insertphoto 버튼 클릭 시 앨범 이동 후 선택 작업 ( 여러 항목 선택 가능 )
+ *      : 카테고리 스피너 item 선택 리스터 통해 Category item 선택
+ *      : 위치 표시 CheckBox 통해 권한 여부 먼저 check
+ *        uncheck 시 AlertDialog 통해 1번 더 checkBox 끄기 여부 확인
+ *      : okbtn 클릭 시 입력받은 Data String 형태로 저장
+ *      : 입력받은 EditText 입력 여부 확인
+ *        모든 EditText 가 입력되었을 경우 FireBase RealTimeDatabse의 Bulletin 관련 항목에 bulletin Data 추가
+ *
+ **/
 
 public class WriteActivity extends Activity {
     private static int WRITE_ALBUM_IMAGE_REQUEST = 1;
-
 
     Button okbtn;
     Button insertphoto;
@@ -157,7 +158,7 @@ public class WriteActivity extends Activity {
                         locationM.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, gpsLocationListener); //GPS 이용 위치 제공 1초, 1미터당 해당 값 갱신
                         locationM.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 1, gpsLocationListener); // 기지국, WIFI를 이용한 위치 제공 1초, 1미터당 해당 값 갱신
                     } catch (SecurityException e) {
-                        Toast.makeText(getApplicationContext(), "위치 권한이 필요합니다. 권한을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                        Log.e("에러", "위치 권한이 필요합니다. 제대로 확인해주세요");
                     }
                 } else { // checkBox = unCheck
                     AlertDialog.Builder locationAlert = new AlertDialog.Builder(WriteActivity.this);
@@ -178,6 +179,7 @@ public class WriteActivity extends Activity {
                 }
             }
 
+            //Gps 위치 리스너
             LocationListener gpsLocationListener = new LocationListener() {
                 @Override
                 public void onLocationChanged(Location location) {
@@ -227,7 +229,7 @@ public class WriteActivity extends Activity {
                 Log.v("알림", "이미지 4 : " + BulletinImage4);
 
 
-
+                //editText 입력 여부 확인
                 if (Title.length() == 0) {
                     write_title.setError("제목을 입력해주세요.");
                 } else if (Bulletins.length() == 0) {
@@ -253,6 +255,7 @@ public class WriteActivity extends Activity {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                    //FireBase RealTimeDataBase [Bulletin]-[AllBulletin]과 스피너에서 선택한 Category값 에 bulletin 값 추가
                     mDatabase.child("Bulletin").child("AllBulletin").push().setValue(bulletin);
                     mDatabase.child("Bulletin").child(bulletin.Category).push().setValue(bulletin);
                     write_title.setText(null);
@@ -261,7 +264,6 @@ public class WriteActivity extends Activity {
 
                     finish();
                     startActivity(new Intent(getApplicationContext(), SecondMainActivity.class));
-                    //   startActivity(new Intent(getApplicationContext(),PostActivity.class));
 
                 }
             }
@@ -286,7 +288,6 @@ public class WriteActivity extends Activity {
                 write_albumuri = data.getData(); //Uri 가져오기
                 ClipData cd = data.getClipData();
                 String write_albumImage = formatter.format(date);
-//                StorageReference wsrf = storage.getReferenceFromUrl("gs://otpdata-edb66.appspot.com/").child("postImage/" + write_albumImage + "_" + count++ + ".png");
 
                 if (cd != null) {
                     progressDialog.setTitle("게시글 이미지 업로드");
@@ -374,6 +375,7 @@ public class WriteActivity extends Activity {
         }
     }
 
+    //BackButton 동작 x
     @Override
     public void onBackPressed() {
 

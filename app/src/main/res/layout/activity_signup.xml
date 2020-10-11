@@ -1,24 +1,24 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<?xml version="1.0" encoding="utf-8"?><!--회원가입 레이아웃-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.example.os150.otp.MainActivity">
+
     <Button
         android:id="@+id/backbtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
-        android:text="뒤로가기 > "
-        android:fontFamily="@font/kyobohandwriting" />
+        android:fontFamily="@font/kyobohandwriting"
+        android:text="뒤로가기 > " />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center">
+        android:gravity="center"
+        android:orientation="vertical">
 
 
         <TextView
@@ -30,145 +30,146 @@
             android:text="회원가입"
             android:textSize="50dp"
             android:textStyle="bold" />
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="horizontal">
 
-        <TextView
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="83dp"
-            android:fontFamily="@font/kyobohandwriting"
-            android:text="성함"
-            android:textSize="16dp"
-            android:textStyle="bold" />
-        <EditText
-            android:id="@+id/name"
-            android:layout_width="220dp"
-            android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:hint="본명"
-            />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="horizontal">
-        <TextView
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="83dp"
+                android:fontFamily="@font/kyobohandwriting"
+                android:text="성함"
+                android:textSize="16dp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/name"
+                android:layout_width="220dp"
+                android:layout_height="wrap_content"
+                android:hint="본명"
+                android:singleLine="true" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="85dp"
-            android:text="별명"
-            android:textStyle="bold"
-            android:textSize="16dp"
-            android:fontFamily="@font/kyobohandwriting"
-            />
+            android:layout_gravity="center"
+            android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/nickname"
-            android:layout_width="220dp"
-            android:layout_height="wrap_content"
-            android:hint="활동명"
-            android:singleLine="true"
-            />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="horizontal">
-        <TextView
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="85dp"
+                android:fontFamily="@font/kyobohandwriting"
+                android:text="별명"
+                android:textSize="16dp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/nickname"
+                android:layout_width="220dp"
+                android:layout_height="wrap_content"
+                android:hint="활동명"
+                android:singleLine="true" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="48dp"
-            android:text="핸드폰번호"
-            android:textStyle="bold"
-            android:textSize="16dp"
-            android:fontFamily="@font/kyobohandwriting"
-            />
+            android:layout_gravity="center"
+            android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/phonenum"
-            android:layout_width="220dp"
-            android:layout_height="wrap_content"
-            android:hint="'-' 제외"
-            android:singleLine="true"
-            />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="horizontal">
-        <TextView
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="48dp"
+                android:fontFamily="@font/kyobohandwriting"
+                android:text="핸드폰번호"
+                android:textSize="16dp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/phonenum"
+                android:layout_width="220dp"
+                android:layout_height="wrap_content"
+                android:hint="'-' 제외"
+                android:singleLine="true" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="71dp"
-            android:text="이메일"
-            android:textStyle="bold"
-            android:textSize="16dp"
-            android:fontFamily="@font/kyobohandwriting"
-            />
+            android:layout_gravity="center"
+            android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/email"
-            android:layout_width="220dp"
-            android:layout_height="wrap_content"
-            android:hint="실제 주소"
-            android:singleLine="true"
-            />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="horizontal">
-        <TextView
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="71dp"
+                android:fontFamily="@font/kyobohandwriting"
+                android:text="이메일"
+                android:textSize="16dp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/email"
+                android:layout_width="220dp"
+                android:layout_height="wrap_content"
+                android:hint="실제 주소"
+                android:singleLine="true" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="59dp"
-            android:text="비밀번호"
-            android:textStyle="bold"
-            android:textSize="16dp"
-            android:fontFamily="@font/kyobohandwriting"
-            />
+            android:layout_gravity="center"
+            android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/pw"
-            android:layout_width="220dp"
-            android:layout_height="wrap_content"
-            android:hint="6자리 이상"
-            android:inputType="textPassword"
-            android:singleLine="true"
-            />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="horizontal">
-        <TextView
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="59dp"
+                android:fontFamily="@font/kyobohandwriting"
+                android:text="비밀번호"
+                android:textSize="16dp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/pw"
+                android:layout_width="220dp"
+                android:layout_height="wrap_content"
+                android:hint="6자리 이상"
+                android:inputType="textPassword"
+                android:singleLine="true" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="28dp"
-            android:text="비밀번호 확인"
-            android:textStyle="bold"
-            android:textSize="16dp"
-            android:fontFamily="@font/kyobohandwriting"
-            />
+            android:layout_gravity="center"
+            android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/pwcheck"
-            android:layout_width="220dp"
-            android:layout_height="wrap_content"
-            android:hint="비밀번호 확인"
-            android:inputType="textPassword"
-            android:singleLine="true"
-            />
-    </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="28dp"
+                android:fontFamily="@font/kyobohandwriting"
+                android:text="비밀번호 확인"
+                android:textSize="16dp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/pwcheck"
+                android:layout_width="220dp"
+                android:layout_height="wrap_content"
+                android:hint="비밀번호 확인"
+                android:inputType="textPassword"
+                android:singleLine="true" />
+        </LinearLayout>
 
         <Button
             android:id="@+id/signupbtn"

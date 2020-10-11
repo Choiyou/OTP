@@ -7,12 +7,15 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.RadioButton;
 import android.widget.Toast;
 
 /**
  * Created by os150 on 2020-05-20.
- */
+ * Terms Activity 자바 파일
+ * 기능 : allcb 클릭 시 Check 여부에 따른 기능 수행
+ *      : nextbtn 클릭 시 termscb & pipcb 모두 check 상태일 경우에만 SignupActivity 로 화면 전환
+ *      : backbtn 클릭 시 MainActivity로 화면 전환
+ **/
 
 public class TermsActivity extends Activity { //
     CheckBox allcb;
@@ -32,13 +35,17 @@ public class TermsActivity extends Activity { //
         nextbtn = (Button) findViewById(R.id.nextbtn);
         backbutton = (Button) findViewById(R.id.backbutton);
 
+        //allcb 클릭시
         allcb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                //allcb가 check 되어 있으면 Termscb & pipcb 모두 check
                 if (allcb.isChecked()) {
                     termscb.setChecked(true);
                     pipcb.setChecked(true);
                 } else {
+                    // 아니면 Termscb & pipcb 모두 uncheck
                     termscb.setChecked(false);
                     pipcb.setChecked(false);
                 }

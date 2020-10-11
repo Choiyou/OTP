@@ -8,5 +8,4 @@ public class UserModel {
     public String uid;
     public String nickname;
     public String profileimage;
-//    public String comment;
 }

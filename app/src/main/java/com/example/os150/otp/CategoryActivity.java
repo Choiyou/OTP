@@ -1,26 +1,27 @@
 package com.example.os150.otp;
 
 import android.app.Activity;
-import android.app.ActivityGroup;
 import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.Toast;
 
 /**
  * Created by os150 on 2020-05-19.
+ * Category Activity Java 파일
+ * 기능 : 각 15개의 버튼 클릭 시 SelectCategoryActivity로 화면 전환
+ *      : 선택 Button의 Text 값 SelectCategoryActivity로 전송
  */
 
 public class CategoryActivity extends Activity {
+
     Button kids, man, pet, buy, recycling, book, free, game, sports, furniture, digital, woman, womanthings, beauty, processedfood;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
+
         kids = (Button) findViewById(R.id.kids);
         man = (Button) findViewById(R.id.man);
         pet = (Button) findViewById(R.id.pet);
