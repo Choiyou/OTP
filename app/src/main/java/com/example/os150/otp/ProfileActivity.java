@@ -222,7 +222,6 @@ public class ProfileActivity extends ActivityGroup {
                                         Log.e("에러", "데이터베이스에서 데이터 불러오기 실패");
                                     }
                                 });
-
                                 mDatabase.child("userInfo").child(user.getUid()).removeValue();
                                 mAuth.signOut();
 
