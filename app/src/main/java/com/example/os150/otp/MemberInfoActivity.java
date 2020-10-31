@@ -226,7 +226,7 @@ public class MemberInfoActivity extends ActivityGroup {
             @Override
             public void onClick(View view) {
                 Intent localseti = new Intent(getApplicationContext(), MyPostActivity.class);
-                localseti.putExtra("key", "동네 설정");
+                localseti.putExtra("key", "동네 검색");
                 startActivity(localseti);
             }
         });

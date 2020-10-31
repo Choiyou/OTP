@@ -190,7 +190,7 @@ public class AllFriendFragment extends Fragment {
 
                                 //Popup 메뉴에서 대화하기 클릭 시
                                 case R.id.message:
-                                    Intent allfriendintent = new Intent(view.getContext(), MessageActivity.class);
+                                    Intent allfriendintent = new Intent(getContext(), MessageActivity.class);
                                     allfriendintent.putExtra("destinationUid", AllFriendModels.get(position).uid);//상대방 uid
                                     ActivityOptions activityOptions = null;
                                     //기기의 안드로이드 버전이 JellyBean 이상이어야 함

@@ -45,7 +45,7 @@ import java.util.Locale;
  * Created by os150 on 2020-05-19.
  * WriteActivity 자바 파일
  * 기능 : insertphoto 버튼 클릭 시 앨범 이동 후 선택 작업 ( 여러 항목 선택 가능 )
- *      : 카테고리 스피너 item 선택 리스터 통해 Category item 선택
+ *      : 카테고리 스피너 item 선택 리스너 통해 Category item 선택
  *      : 위치 표시 CheckBox 통해 권한 여부 먼저 check
  *        uncheck 시 AlertDialog 통해 1번 더 checkBox 끄기 여부 확인
  *      : okbtn 클릭 시 입력받은 Data String 형태로 저장

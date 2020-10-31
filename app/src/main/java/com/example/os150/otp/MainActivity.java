@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     EditText midedit;
     EditText mpwedit;
 
+    TextView textinfo;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseUser user = mAuth.getCurrentUser();
 
@@ -52,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         mresetpwbtn = (Button) findViewById(R.id.mpwresetbtn);
         midedit = (EditText) findViewById(R.id.inputid);
         mpwedit = (EditText) findViewById(R.id.inputpw);
-
+        textinfo = (TextView) findViewById(R.id.text_info);
         // Permission 리스너 생성
         PermissionListener permissionListener = new PermissionListener() {
             @Override
@@ -86,6 +88,13 @@ public class MainActivity extends AppCompatActivity {
             //SecondMainActivity로 전환, 현재 Activity 종료
         }
 
+        textinfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(), "중고거래 어플은 거래가 이루어지는 어플이기 때문에 신중을 기해주세요.\n " +
+                        "매너를 지키는 멋쟁이 이쁜이 유저들이 됩시다.", Toast.LENGTH_LONG).show();
+            }
+        });
 
         //로그인 버튼 클릭 시 이벤트
         msigninbtn.setOnClickListener(new View.OnClickListener() {

@@ -18,6 +18,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -182,19 +184,7 @@ public class ProfileActivity extends ActivityGroup {
                                 //회원 탈퇴 시 채팅방 UserInfo 삭제, 내 친구 삭제, 유저 관심 상품 삭제, 내 게시글, 채팅방 삭제
                                 mDatabase.child("chatuserInfo").child(user.getUid()).removeValue();
                                 mDatabase.child("myfriendlist").child(user.getUid()).removeValue();
-                                mDatabase.child("myfriendlist").orderByChild(user.getUid()).equalTo(user.getUid()).addValueEventListener(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                            snapshot.getRef().removeValue();
-                                        }
-                                    }
 
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {
-                                        Log.e("에러", "데이터베이스에서 데이터 불러오기 실패");
-                                    }
-                                });
                                 mDatabase.child("chatroom").orderByChild("users/" + user.getUid()).equalTo(true).addValueEventListener(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {

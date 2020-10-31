@@ -143,7 +143,7 @@ public class MyPostActivity extends AppCompatActivity {
 
                     break;
 
-                case "동네 설정":
+                case "동네 검색":
                     finish();
                     startActivity(new Intent(getApplicationContext(), TownSettingActivity.class));
                     break;

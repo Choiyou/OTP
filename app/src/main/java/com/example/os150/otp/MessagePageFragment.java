@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -86,6 +87,7 @@ public class MessagePageFragment extends Fragment {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     MessagePageModel.clear(); //MessagePageModel 초기화
+
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
                         MessagePageModel.add(snapshot.getValue(ChatModel.class));
@@ -93,6 +95,7 @@ public class MessagePageFragment extends Fragment {
                     }
 
                     notifyDataSetChanged(); //ListView 항목 새로고침
+
                 }
 
                 @Override
@@ -123,7 +126,6 @@ public class MessagePageFragment extends Fragment {
                     destination = chatuser;
                     destinationUser.add(destination);
                     Log.v("알림", "상대방 Uid : " + destination);
-
 
                 }
             }

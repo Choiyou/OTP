@@ -3,6 +3,7 @@ package com.example.os150.otp;
 import android.app.ActivityOptions;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -23,6 +24,7 @@ import android.widget.EditText;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -44,23 +46,24 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Created by os150 on 2020-07-06.
  * MyFriendFragment 자바 파일
  * 기능 : RecyclerView myFriend_recyclerView 연결,MyFriendFragmentRecyclerViewAdapter를 RecyclerView에 지정
- *      : MyFriendFragment 목록 어뎁터 생성
- *      : item_chatuser와 연결된 ViewHolder 생성
- *      : itemView 클릭 시 팝업 메뉴 생성
- *        팝업 메뉴 = 친구 삭제 / 신고하기 / 채팅하기
- *        각 기능에 맞게 수행
+ * : MyFriendFragment 목록 어뎁터 생성
+ * : item_chatuser와 연결된 ViewHolder 생성
+ * : itemView 클릭 시 팝업 메뉴 생성
+ * 팝업 메뉴 = 친구 삭제 / 신고하기 / 채팅하기
+ * 각 기능에 맞게 수행
  */
 
 public class MyFriendFragment extends Fragment {
 
     //UserModel 타입의 리스트
     List<UserModel> MyFriendModels = new ArrayList<>();
-
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     FirebaseUser user = mAuth.getCurrentUser();
+    List<UserModel> duModel = new ArrayList<>();
 
     RecyclerView myfriend_recyclerView;
+    Intent myfriendintent;
 
     public MyFriendFragment() {
 
@@ -195,14 +198,41 @@ public class MyFriendFragment extends Fragment {
                                     break;
                                 //Popup 메뉴에서 대화하기 클릭 시
                                 case R.id.message:
-                                    Intent myfriendintent = new Intent(view.getContext(), MessageActivity.class);
+                                    myfriendintent = new Intent(getContext(), MessageActivity.class);
                                     myfriendintent.putExtra("destinationUid", MyFriendModels.get(position).uid);//상대방 uid
-                                    ActivityOptions activityOptions = null;
-                                    // 기기의 안드로이드 버전이 Jelly_Bean 이상일 경우에만 작동
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                                        activityOptions = ActivityOptions.makeCustomAnimation(view.getContext(), R.anim.toright, R.anim.toleft);
-                                        startActivity(myfriendintent, activityOptions.toBundle());
+                                    try {
+
+                                        mDatabase.child("userInfo").child(MyFriendModels.get(position).uid).addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                UserModel uid = dataSnapshot.getValue(UserModel.class);
+                                                if (uid == null) {
+                                                    Toast.makeText(getActivity(), "탈퇴한 회원입니다.", Toast.LENGTH_SHORT).show();
+                                                } else if (uid != null) {
+                                                    Toast.makeText(getActivity(), "전송버튼을 한번 누른후 데이터를 입력해주세요.", Toast.LENGTH_SHORT).show();
+                                                    // 기기의 안드로이드 버전이 Jelly_Bean 이상일 경우에만 작동
+
+                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                                                        ActivityOptions activityOptions = null;
+                                                        activityOptions = ActivityOptions.makeCustomAnimation(view.getContext(), R.anim.toright, R.anim.toleft);
+                                                        startActivity(myfriendintent, activityOptions.toBundle());
+
+                                                    }
+                                                    return;
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
+
+                                            }
+                                        });
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
                                     }
+
+
+
                                     break;
                             }
                             return false;
