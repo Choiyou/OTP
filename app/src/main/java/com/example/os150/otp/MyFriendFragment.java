@@ -54,7 +54,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 
 public class MyFriendFragment extends Fragment {
-
     //UserModel 타입의 리스트
     List<UserModel> MyFriendModels = new ArrayList<>();
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -230,7 +229,6 @@ public class MyFriendFragment extends Fragment {
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     }
-
 
 
                                     break;
